@@ -1,0 +1,106 @@
+/* events/event_list.css */
+.events-wrapper {
+  width: 89%;
+  padding: 40px 5%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.event-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.event-card {
+  cursor: pointer;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 25px 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+}
+
+.event-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.event-date {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 15px;
+}
+
+.event-description {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.event-location {
+  font-size: 16px;
+  color: #444;
+}
+
+/* Event Level Badges */
+.event-level {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  margin-top: 10px;
+}
+
+.event-level-1 {
+  background-color: #4CAF50; /* Green for UMPSA */
+}
+
+.event-level-2 {
+  background-color: #2196F3; /* Blue for District */
+}
+
+.event-level-3 {
+  background-color: #FFC107; /* Yellow for State */
+  color: #333;
+}
+
+.event-level-4 {
+  background-color: #FF9800; /* Orange for National */
+}
+
+.event-level-5 {
+  background-color: #F44336; /* Red for International */
+}
+
+/* Create Event Button Styles */
+.create-event-container {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+.create-event-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.create-event-btn:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}

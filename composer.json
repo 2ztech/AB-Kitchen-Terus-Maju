@@ -1,0 +1,10 @@
+{
+    "name": "vendor/mypetakom",
+    "description": "QR code generator",
+    "type": "project",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "require": {
+        "endroid/qr-code": "^4.8"
+    }
+}

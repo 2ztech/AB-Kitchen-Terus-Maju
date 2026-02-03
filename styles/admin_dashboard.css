@@ -1,0 +1,85 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content-wrapper {
+    display: flex;
+    flex: 1;
+}
+
+main {
+    background-color: #EEE2DC;
+    color: black;
+    padding: 20px;
+    min-height: calc(100vh - 120px);
+    transition: margin-left .5s;
+    flex: 1;
+}
+
+main h1 {
+    margin-bottom: 5px;
+}
+
+main hr {
+    border: 2px solid black;
+    width: 300px;
+    margin-bottom: 20px;
+}
+
+.menu-toggle {
+    font-size: 30px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+/* Add this to your CSS file */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.content-split {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    /* Table takes more space than chart */
+    gap: 20px;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.status-badge.pending {
+    background: #ffeeba;
+    color: #856404;
+}
+
+.status-badge.paid {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.completed {
+    background: #cce5ff;
+    color: #004085;
+}
