@@ -33,14 +33,32 @@ main hr {
     margin-bottom: 20px;
 }
 
+/* Updated Menu Toggle & Header Layout */
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
 .menu-toggle {
     font-size: 30px;
     cursor: pointer;
-    margin-bottom: 20px;
+    color: #333;
     display: inline-block;
+    /* Removed margin-bottom as it is handled by parent gap/margin */
 }
 
-/* Add this to your CSS file */
+.welcome-banner h1 {
+    margin: 0;
+}
+
+.welcome-banner p {
+    margin: 5px 0 0 0;
+    color: #666;
+}
+
+/* Statistics Grid */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

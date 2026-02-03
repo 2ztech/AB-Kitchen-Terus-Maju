@@ -1,60 +1,99 @@
 <?php
-// index.php - Public Customer Page
+/**
+ * Kuih Raya - Digital Storefront
+ * Location: index.php
+ */
+
 require_once 'config/db.php';
 
-// Get the database connection
-$pdo = Database::getInstance();
+// Initialize Session if not already
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Fetch all active products
-$stmt = $pdo->query("SELECT * FROM products WHERE is_active = 1");
-$products = $stmt->fetchAll();
+// Handle Add to Cart
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
+    $p_id = $_POST['product_id'];
+    $qty = 1; // Default add 1
+    
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
+    
+    if (isset($_SESSION['cart'][$p_id])) {
+        $_SESSION['cart'][$p_id] += $qty;
+    } else {
+        $_SESSION['cart'][$p_id] = $qty;
+    }
+    
+    // Refresh to show updated cart count
+    header("Location: index.php");
+    exit();
+}
+
+// Fetch Products (Active only can be filtered if needed, currently all)
+try {
+    // Only show products with stock > 0 optionally, but for now show all
+    $stmt = $pdo->query("SELECT * FROM products ORDER BY name ASC");
+    $products = $stmt->fetchAll();
+} catch (PDOException $e) {
+    die("Error loading products.");
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Kuih Raya</title>
-    <style>
-        /* Simple inline CSS for the shop view */
-        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
-        .card img { width: 100%; height: 150px; object-fit: cover; border-radius: 4px; }
-        .price { color: #d9534f; font-weight: bold; font-size: 1.2em; }
-        .btn-order { background: #28a745; color: white; padding: 10px; text-decoration: none; display: block; margin-top: 10px; border-radius: 4px; }
-        .sold-out { background: #ccc; cursor: not-allowed; }
-    </style>
+    <title>Kuih Raya Digital Store</title>
+    <!-- BoxIcons for Cart Icon -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/shop.css">
 </head>
 <body>
 
-    <div class="header">
-        <h1>✨ Kuih Raya Orders</h1>
-        <a href="login.php" style="font-size: 0.8em; color: #666;">Staff Login</a>
-    </div>
+    <?php include 'pages/shop/header.php'; ?>
 
-    <div class="grid">
-        <?php if (count($products) > 0): ?>
-            <?php foreach ($products as $kuih): ?>
-                <div class="card">
-                    <img src="<?= $kuih['image_path'] ? 'uploads/'.$kuih['image_path'] : 'https://placehold.co/200x150?text=No+Image' ?>" alt="<?= htmlspecialchars($kuih['name']) ?>">
-                    
-                    <h3><?= htmlspecialchars($kuih['name']) ?></h3>
-                    <p class="price">RM <?= number_format($kuih['price'], 2) ?></p>
-                    <p>Stock: <?= $kuih['stock_quantity'] ?> jars</p>
+    <section class="hero">
+        <h1>Selamat Hari Raya!</h1>
+        <p>Order your favorite traditional Kuih Raya online.</p>
+    </section>
 
-                    <?php if ($kuih['stock_quantity'] > 0): ?>
-                        <a href="order_form.php?id=<?= $kuih['id'] ?>" class="btn-order">Order Now</a>
-                    <?php else: ?>
-                        <span class="btn-order sold-out">Sold Out</span>
-                    <?php endif; ?>
+    <div class="container">
+        <div class="product-grid">
+            <?php foreach ($products as $p): ?>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="<?= $p['image_url'] ? 'images/product/' . htmlspecialchars($p['image_url']) : 'images/icons/no-image.png' ?>" 
+                             alt="<?= htmlspecialchars($p['name']) ?>"
+                             onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title"><?= htmlspecialchars($p['name']) ?></h3>
+                        <p class="product-desc"><?= htmlspecialchars(substr($p['description'], 0, 80)) ?>...</p>
+                        <span class="product-price">RM <?= number_format($p['price'], 2) ?></span>
+                        
+                        <?php if ($p['stock'] > 0): ?>
+                            <form method="POST">
+                                <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
+                                <button type="submit" name="add_to_cart" class="btn-add-cart">Add into Cart</button>
+                            </form>
+                        <?php else: ?>
+                            <button class="btn-add-cart" style="background:#ccc;cursor:not-allowed;" disabled>Out of Stock</button>
+                        <?php endif; ?>
+                    </div>
                 </div>
             <?php endforeach; ?>
-        <?php else: ?>
-            <p>No kuih added yet. Login to the admin dashboard to add products!</p>
-        <?php endif; ?>
+        </div>
     </div>
+
+    <!-- Simple Footer -->
+    <footer style="text-align:center;padding:20px;color:#888;font-size:0.9rem;">
+        &copy; 2026 Kuih Raya Digital Store. All rights reserved.
+    </footer>
 
 </body>
 </html>

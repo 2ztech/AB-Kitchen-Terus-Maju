@@ -1,5 +1,5 @@
 <?php
-require_once 'config/config.php';
+require_once __DIR__ . '/config/config.php';
 
 // Skip session check if we're in QR flow
 $is_qr_flow = isset($_SESSION['qr_redirect']) || 
@@ -12,56 +12,40 @@ if (!isset($_SESSION['user_id']) && !$is_qr_flow) {
 
 // Get complete user data from database
 try {
-    $stmt = $pdo->prepare("SELECT full_name, role, profile_pic FROM users WHERE id = ?");
+    // We only have 'username', 'role', 'is_new' in the new schema. 
+    // No profile_pic or full_name yet.
+    $stmt = $pdo->prepare("SELECT username, role, is_new FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch();
 
     if (!$user) {
-        throw new Exception("User not found");
+        // Force logout if user no longer exists in DB
+        session_destroy();
+        header('Location: /index.php');
+        exit;
     }
 
-    // Set session variables from database
-    $_SESSION['full_name'] = $user['full_name'];
+    // Set session variables
+    $_SESSION['username'] = $user['username'];
     $_SESSION['role'] = $user['role'];
-    $_SESSION['profile_pic'] = $user['profile_pic'];
+    $_SESSION['is_new'] = $user['is_new'];
 
     // Determine dashboard URL based on role
     $dashboard_url = match($user['role']) {
         'admin' => '/pages/dashboard/admin_dashboard.php',
-        'coordinator' => '/pages/dashboard/admin_dashboard.php',
-        'advisor' => '/pages/dashboard/event_advisor_dashboard.php',
-        'student' => '/pages/dashboard/student_dashboard.php',
-        default => '/pages/dashboard/default_dashboard.php'
+        'cashier' => '/pages/dashboard/cashier_dashboard.php',
+        default => '/index.php' // Fallback
     };
 
-    // Set default image path
-    $default_image = '/images/icons/user.png';
-    $profile_image = $default_image;
+    // Default Avatar
+    $profile_image = '/images/icons/user.png';
 
-    // Validate and set profile image if available
-    if (!empty($user['profile_pic'])) {
-        $filename = htmlspecialchars($user['profile_pic']);
-        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-        
-        if (in_array($extension, $allowed)) {
-            $image_path = '/images/profile_pic/'.$filename;
-            $full_path = $_SERVER['DOCUMENT_ROOT'].$image_path;
-            if (file_exists($full_path)) {
-                $profile_image = $image_path;
-            }
-        }
-    }
 } catch (PDOException $e) {
     error_log("Database error in header.php: " . $e->getMessage());
-    // Handle error appropriately, maybe redirect to error page
-    header('Location: /error.php');
-    exit;
+    die("System Error");
 } catch (Exception $e) {
     error_log("Error in header.php: " . $e->getMessage());
-    // Handle error appropriately
-    header('Location: /error.php');
-    exit;
+    die("System Error");
 }
 ?>
 <!DOCTYPE html>
@@ -84,16 +68,14 @@ try {
       <div class="profile" onclick="toggleProfileMenu()">
         <div class="profile-pic" style="background-image: url('<?= $profile_image ?>')"></div>
         <div class="profile-menu" id="profileMenu">
-          <h3><?= htmlspecialchars($_SESSION['full_name']) ?><br>
-            <span><?= htmlspecialchars($_SESSION['role']) ?></span>
+          <h3><?= htmlspecialchars($_SESSION['username']) ?><br>
+            <span><?= htmlspecialchars(ucfirst($_SESSION['role'])) ?></span>
           </h3>
           <ul>
             <li>
-              <img src="../../images/icons/user.png"><a href="/pages/user_management/user_profile.php">My Profile</a>
+              <img src="../../images/icons/user.png"><a href="/pages/users/user_profile.php">My Profile</a>
             </li>
-            <li>
-              <img src="../../images/icons/edit.png"><a href="/pages/user_management/user_profile.php?edit=1">Edit Profile</a>
-            </li>
+            <!-- Edit Profile is now part of My Profile (Change Password) -->
             <li>
               <img src="../../images/icons/log-out.png"><a href="/logout.php">Logout</a>
             </li>

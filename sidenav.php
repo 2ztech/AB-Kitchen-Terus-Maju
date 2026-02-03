@@ -1,66 +1,41 @@
 <div class="content-wrapper">
     <div id="mySidenav" class="sidenav">
-        <?php if ($_SESSION['role'] === 'student') : ?>
-        <!-- Student Menu -->
-        <div class="student-submenu">
-            <a href="#">Event</a>
+        <!-- Admin Menu -->
+        <?php if ($_SESSION['role'] === 'admin') : ?>
+        <div class="has-submenu">
+            <a href="#">Products</a>
             <div class="submenu">
-                <a href="/pages/event/event_list.php">Event List</a>
-            </div>
-        </div>
-        
-        <div class="student-submenu">
-            <a href="#">Merit</a>
-            <div class="submenu">
-                <a href="/pages/merit/view_merits.php">View Merit</a>
-                <a href="/pages/merit/claim_merit.php">Claim Missing Merit</a>
+                <a href="/pages/products/product_list.php">Manage Products</a>
+                <a href="/pages/products/add_product.php">Add New Product</a>
             </div>
         </div>
 
-        <?php elseif ($_SESSION['role'] === 'event_advisor') : ?>
-        <!-- Event Advisor Menu -->
         <div class="has-submenu">
-            <a href="#">Event</a>
+            <a href="#">Orders</a>
             <div class="submenu">
-                <a href="/pages/event/event_list.php">Event List</a>
-                <a href="/pages/event/event_committee.php">Event Committee</a>
-                <a href="/pages/event/event_qr.php">Generate QR</a>
+                <a href="/pages/orders/list.php">All Orders</a>
             </div>
         </div>
         
         <div class="has-submenu">
-            <a href="#">Merit</a>
+            <a href="#">Users</a>
             <div class="submenu">
-                <a href="/pages/merit/merit_application.php">Merit Application</a>
+                <a href="/pages/users/user_list.php">Manage Users</a>
             </div>
         </div>
 
-        <?php else : ?>
-        <!-- Coordinator/Admin Menu -->
+        <!-- Cashier Menu -->
+        <?php elseif ($_SESSION['role'] === 'cashier') : ?>
         <div class="has-submenu">
-            <a href="#">Event</a>
-            <div class="submenu">
-                <a href="/pages/event/event_list.php">Event List</a>
-            </div>
+            <a href="/pages/pos/checkout.php">New Order (POS)</a>
         </div>
         
         <div class="has-submenu">
-            <a href="#">Merit</a>
-            <div class="submenu">
-                <a href="/pages/merit/merit_approval.php">Merit Approval</a>
-            </div>
+            <a href="/pages/products/product_list.php">View Products</a>
         </div>
-        
+
         <div class="has-submenu">
-            <a href="#">Manage User</a>
-            <div class="submenu">
-                <a href="/pages/user_management/user_list.php">User List</a>
-                <a href="/pages/user_management/membership_application.php">Membership Application</a>
-            </div>
-        </div>
-        
-        <div class="has-submenu">
-            <a href="/pages/report/reports_list.php">View Report</a>
+            <a href="/pages/orders/history.php">Order History</a>
         </div>
         <?php endif; ?>
     </div>

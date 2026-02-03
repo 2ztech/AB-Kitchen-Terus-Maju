@@ -2,7 +2,7 @@
 // config/config.php
 
 // Load environment variables if using .env
-require_once 'db.php'; // Database configuration
+require_once __DIR__ . '/db.php'; // Database configuration
 
 // Session configuration
 session_set_cookie_params([
@@ -20,4 +20,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Global PDO instance
-$pdo = Database::getInstance();
+// Global PDO instance is already created in db.php, but we can ensure it here if needed
+if (!isset($pdo)) {
+    $pdo = Database::getConnection();
+}

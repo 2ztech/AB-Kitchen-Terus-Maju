@@ -1,0 +1,185 @@
+/* Kuih Raya Shop Styles */
+:root {
+    --primary-color: #dcb5ff;
+    /* Soft Purple/Pink hint */
+    --accent-color: #ff6b6b;
+    /* Vibrant Red/Pink for buttons */
+    --bg-color: #fff9f5;
+    /* Warm off-white */
+    --text-color: #333;
+    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    margin: 0;
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Header */
+.shop-header {
+    background: white;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.shop-logo img {
+    height: 60px;
+}
+
+.shop-nav {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.shop-nav a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+}
+
+.shop-nav a:hover {
+    color: var(--accent-color);
+}
+
+.cart-icon {
+    position: relative;
+    font-size: 1.4rem;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background: var(--accent-color);
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.staff-login-btn {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #fff0f6 0%, #e6e6fa 100%);
+    margin-bottom: 40px;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin: 0 0 10px 0;
+    color: #4a4a4a;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: #777;
+}
+
+/* Product Grid */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #f0f0f0;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    position: relative;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.05);
+}
+
+.product-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.product-title {
+    font-size: 1.2rem;
+    margin: 10px 0;
+    font-weight: 700;
+}
+
+.product-desc {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 15px;
+    height: 40px;
+    /* Limit height */
+    overflow: hidden;
+}
+
+.product-price {
+    font-size: 1.3rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.btn-add-cart {
+    background: black;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+    width: 100%;
+}
+
+.btn-add-cart:hover {
+    background: var(--accent-color);
+}
