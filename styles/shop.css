@@ -34,6 +34,21 @@ body {
     height: 60px;
 }
 
+.shop-logo a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.3s;
+}
+
+.shop-logo a:hover {
+    color: var(--accent-color);
+}
+
 .shop-nav {
     display: flex;
     gap: 30px;

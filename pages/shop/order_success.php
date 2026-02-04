@@ -31,6 +31,11 @@ try {
 } catch (PDOException $e) {
     die("Error loading receipt.");
 }
+
+if (!function_exists('get_settings')) {
+    require_once '../../helpers.php';
+}
+$settings = get_settings($pdo);
 ?>
 
 <!DOCTYPE html>
@@ -38,6 +43,9 @@ try {
 <head>
     <meta charset="UTF-8">
     <title>Receipt #<?= $order_id ?></title>
+    <?php if (!empty($settings['store_favicon'])): ?>
+        <link rel="icon" href="/images/settings/<?= htmlspecialchars($settings['store_favicon']) ?>" type="image/x-icon">
+    <?php endif; ?>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Outfit', sans-serif; background: #f0f0f0; margin: 0; padding: 20px; }

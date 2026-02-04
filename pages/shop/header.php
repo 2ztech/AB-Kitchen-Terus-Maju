@@ -30,7 +30,7 @@ $store_name = $settings['store_name'] ?? 'My Digital Store';
         <!-- Assuming logo exists, else text -->
         <a href="/index.php">
             <img src="<?= !empty($settings['store_logo']) ? '/images/settings/'.htmlspecialchars($settings['store_logo']) : '/images/Logo.png' ?>" alt="<?= htmlspecialchars($store_name) ?>" onerror="this.src='/images/icons/user.png'"> 
-            <span style="font-weight:bold;margin-left:10px;font-size:1.2rem;color:#333;vertical-align:middle;"><?= htmlspecialchars($store_name) ?></span>
+            <span><?= htmlspecialchars($store_name) ?></span>
         </a>
     </div>
     

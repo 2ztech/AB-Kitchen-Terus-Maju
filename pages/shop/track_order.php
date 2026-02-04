@@ -27,13 +27,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['phone'])) {
         }
     }
 }
+
+if (!function_exists('get_settings')) {
+    require_once '../../helpers.php';
+}
+$settings = get_settings($pdo);
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Track Order - Kuih Raya</title>
+    <title><?= htmlspecialchars($settings['store_name'] ?? 'My Digital Store') ?></title>
+    <?php if (!empty($settings['store_favicon'])): ?>
+        <link rel="icon" href="/images/settings/<?= htmlspecialchars($settings['store_favicon']) ?>" type="image/x-icon">
+    <?php endif; ?>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../styles/shop.css">

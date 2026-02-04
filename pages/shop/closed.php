@@ -12,6 +12,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Store Closed - <?= htmlspecialchars($settings['store_name'] ?? 'My Digital Store') ?></title>
+    <?php if (!empty($settings['store_favicon'])): ?>
+        <link rel="icon" href="/images/settings/<?= htmlspecialchars($settings['store_favicon']) ?>" type="image/x-icon">
+    <?php endif; ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
     <style>

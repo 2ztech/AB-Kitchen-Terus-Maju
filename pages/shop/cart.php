@@ -59,6 +59,12 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         $error = "Error loading cart.";
     }
 }
+
+if (!function_exists('get_settings')) {
+    require_once '../../helpers.php';
+}
+$settings = get_settings($pdo);
+
 ?>
 
 <!DOCTYPE html>
@@ -66,7 +72,10 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Cart</title>
+    <title><?= htmlspecialchars($settings['store_name'] ?? 'My Digital Store') ?></title>
+    <?php if (!empty($settings['store_favicon'])): ?>
+        <link rel="icon" href="/images/settings/<?= htmlspecialchars($settings['store_favicon']) ?>" type="image/x-icon">
+    <?php endif; ?>
     <!-- BoxIcons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <!-- Google Fonts -->
