@@ -21,6 +21,13 @@ try {
     $stmtItems = $pdo->prepare("SELECT oi.*, p.name FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?");
     $stmtItems->execute([$order_id]);
     $items = $stmtItems->fetchAll();
+
+    // Fetch Settings for Receipt Header
+    require_once '../../helpers.php';
+    $settings = get_settings($pdo);
+    $store_name = $settings['store_name'] ?? 'My Digital Store';
+    $store_address = $settings['store_address'] ?? "Address not set.";
+
 } catch (PDOException $e) {
     die("Error loading receipt.");
 }
@@ -80,8 +87,8 @@ try {
 
     <div class="receipt-container">
         <div class="header text-center">
-            <h2>AcikBulat Digital Store</h2>
-            <p>123, Jalan Kuih Raya, Taman Sedap,<br>50000 Kuala Lumpur.</p>
+            <h2><?= htmlspecialchars($store_name) ?></h2>
+            <p><?= nl2br(htmlspecialchars($store_address)) ?></p>
         </div>
         
         <div class="divider"></div>

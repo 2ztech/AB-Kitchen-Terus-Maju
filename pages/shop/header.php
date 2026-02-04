@@ -11,12 +11,26 @@ if (isset($_SESSION['cart'])) {
     }
 }
 ?>
+
+<?php
+// Ensure helpers and settings are available
+if (!function_exists('get_settings')) {
+    // Determine path to helpers based on file location relative to root
+    require_once __DIR__ . '/../../helpers.php';
+}
+
+if (!isset($settings) && isset($pdo)) {
+    $settings = get_settings($pdo);
+}
+
+$store_name = $settings['store_name'] ?? 'My Digital Store';
+?>
 <header class="shop-header">
     <div class="shop-logo">
         <!-- Assuming logo exists, else text -->
         <a href="/index.php">
-            <img src="/images/Logo.png" alt="Kuih Raya Logo" onerror="this.src='/images/icons/user.png'"> 
-            <!-- Fallback just in case -->
+            <img src="<?= !empty($settings['store_logo']) ? '/images/settings/'.htmlspecialchars($settings['store_logo']) : '/images/Logo.png' ?>" alt="<?= htmlspecialchars($store_name) ?>" onerror="this.src='/images/icons/user.png'"> 
+            <span style="font-weight:bold;margin-left:10px;font-size:1.2rem;color:#333;vertical-align:middle;"><?= htmlspecialchars($store_name) ?></span>
         </a>
     </div>
     

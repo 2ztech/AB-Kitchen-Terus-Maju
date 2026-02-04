@@ -40,6 +40,11 @@ try {
     // Default Avatar
     $profile_image = '/images/icons/user.png';
 
+    // Fetch Settings for Store Name
+    require_once __DIR__ . '/helpers.php'; // Ensure helpers are loaded
+    $settings = get_settings($pdo);
+    $store_name = $settings['store_name'] ?? 'My Digital Store';
+
 } catch (PDOException $e) {
     error_log("Database error in header.php: " . $e->getMessage());
     die("System Error");
@@ -53,7 +58,7 @@ try {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyPetakom</title>
+  <title><?= htmlspecialchars($store_name) ?></title>
   <link rel="stylesheet" href="/styles/header.css?v=<?= time() ?>">
   <link rel="stylesheet" href="/styles/sidenav.css?v=<?= time() ?>">
   <link rel="stylesheet" href="/styles/main_style.css?v=<?= time() ?>">
@@ -61,7 +66,7 @@ try {
 <body>
   <header>
     <div class="logo">
-      <img src="/images/Logo.png" alt="MyPetakom Logo">
+      <img src="/images/Logo.png" alt="<?= htmlspecialchars($store_name) ?>">
     </div>
     <nav>
       <a href="<?= $dashboard_url ?>" class="nav-link">Dashboard</a>

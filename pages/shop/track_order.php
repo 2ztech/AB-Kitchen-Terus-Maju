@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['phone'])) {
     <meta charset="UTF-8">
     <title>Track Order - Kuih Raya</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../styles/shop.css">
     <style>
         .track-container { max-width: 800px; margin: 50px auto; padding: 20px; }
@@ -95,5 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['phone'])) {
         </div>
         <?php endif; ?>
     </div>
+
+    <?php include '../../footer.php'; ?>
 </body>
 </html>

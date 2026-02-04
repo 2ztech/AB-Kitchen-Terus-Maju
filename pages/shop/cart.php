@@ -203,5 +203,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         <?php endif; ?>
     </div>
 
+    <?php include '../../footer.php'; ?>
+
 </body>
 </html>

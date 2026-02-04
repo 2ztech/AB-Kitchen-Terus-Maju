@@ -39,6 +39,20 @@ try {
 } catch (PDOException $e) {
     die("Error loading products.");
 }
+
+// Include Helper
+require_once 'helpers.php';
+
+// Fetch Settings
+$settings = get_settings($pdo);
+
+// Check Store Status (Skip if user is logged in as admin/cashier)
+$is_staff = isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'cashier']);
+
+if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
+    include 'pages/shop/closed.php';
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -46,19 +60,50 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AcikBulat Digital Store</title>
+    <title><?= htmlspecialchars($settings['store_name'] ?? 'AcikBulat Digital Store') ?></title>
+    <?php if (!empty($settings['store_favicon'])): ?>
+        <link rel="icon" href="images/settings/<?= htmlspecialchars($settings['store_favicon']) ?>" type="image/x-icon">
+    <?php endif; ?>
     <!-- BoxIcons for Cart Icon -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/shop.css">
+    <style>
+        .announcement-banner {
+            background: #ffeeba;
+            color: #856404;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 20px auto 30px auto; 
+            max-width: 800px;
+            font-weight: bold;
+            border-left: 5px solid #ffc107;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+    </style>
 </head>
 <body>
 
     <?php include 'pages/shop/header.php'; ?>
 
     <section class="hero">
+        <!-- Staff Preview Alert -->
+        <?php if (($settings['store_status'] ?? 'open') === 'closed' && $is_staff): ?>
+            <div style="background:#dc3545;color:white;padding:10px;text-align:center;margin-bottom:20px;border-radius:5px;">
+                <i class='bx bxs-lock-alt'></i> <strong>Store is currently CLOSED to customers.</strong> (You can see this because you are Staff)
+            </div>
+        <?php endif; ?>
+
         <h1>Salam Ramadhan Mubarak!</h1>
+        
+        <?php if (!empty($settings['announcement_text'])): ?>
+            <div class="announcement-banner">
+                <i class='bx bxs-megaphone'></i> <?= nl2br(htmlspecialchars($settings['announcement_text'])) ?>
+            </div>
+        <?php endif; ?>
+
         <p>Order your favorite traditional Kuih Raya online.</p>
     </section>
 
@@ -91,9 +136,7 @@ try {
     </div>
 
     <!-- Simple Footer -->
-    <footer style="text-align:center;padding:20px;color:#888;font-size:0.9rem;">
-        &copy; 2026 AcikBulat Digital Store. All rights reserved.
-    </footer>
+    <?php include 'footer.php'; ?>
 
 </body>
 </html>

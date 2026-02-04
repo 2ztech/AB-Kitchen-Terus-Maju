@@ -127,6 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Checkout - Kuih Raya</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="../../styles/shop.css">
     <style>
         .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
@@ -253,6 +254,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </form>
     </div>
+    
+    <?php include '../../footer.php'; ?>
     
     <script>
         function toggleAddress(show) {
