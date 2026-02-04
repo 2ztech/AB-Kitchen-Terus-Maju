@@ -22,6 +22,7 @@ if (isset($_SESSION['cart'])) {
     
     <nav class="shop-nav">
         <a href="/index.php">Home</a>
+        <a href="/pages/shop/track_order.php">My Orders</a>
         <a href="/pages/shop/cart.php" class="cart-icon">
             <i class='bx bxs-cart-alt'></i> Cart
             <?php if ($cart_count > 0): ?>

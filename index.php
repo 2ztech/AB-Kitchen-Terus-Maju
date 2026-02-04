@@ -46,7 +46,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuih Raya Digital Store</title>
+    <title>AcikBulat Digital Store</title>
     <!-- BoxIcons for Cart Icon -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <!-- Google Fonts -->
@@ -58,7 +58,7 @@ try {
     <?php include 'pages/shop/header.php'; ?>
 
     <section class="hero">
-        <h1>Selamat Hari Raya!</h1>
+        <h1>Salam Ramadhan Mubarak!</h1>
         <p>Order your favorite traditional Kuih Raya online.</p>
     </section>
 
@@ -92,7 +92,7 @@ try {
 
     <!-- Simple Footer -->
     <footer style="text-align:center;padding:20px;color:#888;font-size:0.9rem;">
-        &copy; 2026 Kuih Raya Digital Store. All rights reserved.
+        &copy; 2026 AcikBulat Digital Store. All rights reserved.
     </footer>
 
 </body>

@@ -25,7 +25,8 @@
 }
 
 /* Submenu styles */
-.has-submenu, .student-submenu {
+.has-submenu,
+.student-submenu {
     position: relative;
 }
 
@@ -40,11 +41,18 @@
     padding: 8px 8px 8px 20px;
 }
 
-.has-submenu:hover .submenu, .student-submenu:hover .submenu {
+
+
+.submenu.show {
     display: block;
 }
 
 @media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
+    .sidenav {
+        padding-top: 15px;
+    }
+
+    .sidenav a {
+        font-size: 18px;
+    }
 }

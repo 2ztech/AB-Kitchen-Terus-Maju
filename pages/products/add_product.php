@@ -36,7 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $dir = '../../images/product/';
                 if (!is_dir($dir)) mkdir($dir, 0777, true);
                 
-                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9]/', '', $name) . '.' . $ext;
+                // New Format: alphanumeric-product-name_timestamp.ext
+                $clean_name = preg_replace('/[^a-zA-Z0-9]/', '-', strtolower($name));
+                $filename = $clean_name . '_' . time() . '.' . $ext;
+                
                 if (move_uploaded_file($_FILES['image']['tmp_name'], $dir . $filename)) {
                     $image_url = $filename;
                 } else {

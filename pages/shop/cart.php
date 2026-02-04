@@ -198,7 +198,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                 <form method="POST" style="display:inline;margin-right:20px;">
                     <button type="submit" name="clear_cart" style="background:none;border:none;color:#999;cursor:pointer;text-decoration:underline;">Clear Cart</button>
                 </form>
-                <button onclick="alert('Checkout feature coming soon!')" class="btn-checkout">Proceed to Checkout</button>
+                <a href="checkout.php" class="btn-checkout">Proceed to Checkout</a>
             </div>
         <?php endif; ?>
     </div>

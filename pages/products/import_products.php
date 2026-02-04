@@ -1,6 +1,6 @@
 <?php
 /**
- * Kuih Raya - Import Products
+ * Kuih Raya - Import Products (ZIP/CSV)
  * Location: pages/products/import_products.php
  */
 
@@ -15,72 +15,133 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 }
 
 $message = '';
-$msgType = ''; // success or error
+$msgType = ''; 
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
-    $file = $_FILES['csv_file'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
+    $file = $_FILES['import_file'];
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     
-    // Check for errors
-    if ($file['error'] !== UPLOAD_ERR_OK) {
-        $message = "Upload error code: " . $file['error'];
-        $msgType = 'error';
-    } elseif (pathinfo($file['name'], PATHINFO_EXTENSION) !== 'csv') {
-        $message = "Please upload a valid CSV file.";
-        $msgType = 'error';
-    } else {
-        // Process CSV
-        $handle = fopen($file['tmp_name'], 'r');
-        if ($handle === false) {
-            $message = "Could not open file.";
-            $msgType = 'error';
-        } else {
-            // Skip Header
-            fgetcsv($handle); 
-            
-            $imported = 0;
-            $skipped = 0;
-            
-            try {
-                $stmtInsert = $pdo->prepare("INSERT INTO products (name, description, price, stock, image_url) VALUES (?, ?, ?, ?, ?)");
-                $stmtCheck = $pdo->prepare("SELECT COUNT(*) FROM products WHERE name = ?");
+    // Create Uploads Temp Directory if not exists
+    $tempDir = '../../uploads/temp_import_' . time() . '/';
+    
+    try {
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw new Exception("Upload error code: " . $file['error']);
+        }
 
-                $pdo->beginTransaction();
-
-                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                    // Check column count (expect at least 4: Name, Desc, Price, Stock)
-                    if (count($data) < 4) continue;
-
-                    $name = trim($data[0]);
-                    $desc = trim($data[1]);
-                    $price = floatval($data[2]);
-                    $stock = intval($data[3]);
-                    $image = isset($data[4]) ? trim($data[4]) : null;
-
-                    if (empty($name)) continue;
-
-                    // Check duplicate
-                    $stmtCheck->execute([$name]);
-                    if ($stmtCheck->fetchColumn() > 0) {
-                        $skipped++;
-                    } else {
-                        $stmtInsert->execute([$name, $desc, $price, $stock, $image]);
-                        $imported++;
-                    }
+        if ($ext === 'zip') {
+            // --- HANDLE ZIP ---
+            $zip = new ZipArchive();
+            if ($zip->open($file['tmp_name']) === TRUE) {
+                if (!mkdir($tempDir, 0777, true)) {
+                    throw new Exception("Failed to create temp directory");
                 }
                 
-                $pdo->commit();
-                $message = "Import Successful! Imported: $imported, Skipped (Duplicates): $skipped.";
+                $zip->extractTo($tempDir);
+                $zip->close();
+                
+                // Locate CSV
+                $csvPath = $tempDir . 'products.csv';
+                if (!file_exists($csvPath)) {
+                    // Try finding any CSV
+                    $files = glob($tempDir . '*.csv');
+                    if (count($files) > 0) $csvPath = $files[0];
+                    else throw new Exception("No CSV file found in ZIP.");
+                }
+                
+                processCSV($pdo, $csvPath, $tempDir);
+                $message = "ZIP Import Successful!";
                 $msgType = 'success';
-
-            } catch (Exception $e) {
-                $pdo->rollBack();
-                $message = "Error during import: " . $e->getMessage();
-                $msgType = 'error';
+                
+            } else {
+                throw new Exception("Failed to open ZIP file.");
             }
-            
-            fclose($handle);
+        } elseif ($ext === 'csv') {
+            // --- HANDLE CSV ---
+            processCSV($pdo, $file['tmp_name']);
+            $message = "CSV Import Successful! (Note: Images not included in CSV import)";
+            $msgType = 'success';
+        } else {
+            throw new Exception("Invalid file type. Upload valid ZIP or CSV.");
+        }
+
+    } catch (Exception $e) {
+        $message = "Error: " . $e->getMessage();
+        $msgType = 'error';
+    } finally {
+        // Cleanup Temp Directory
+        if (is_dir($tempDir)) {
+            deleteDir($tempDir);
         }
     }
+}
+
+// -----------------------------------------------------------
+// Helper Functions
+// -----------------------------------------------------------
+
+function processCSV($pdo, $csvPath, $extractDir = null) {
+    $handle = fopen($csvPath, 'r');
+    if ($handle === false) throw new Exception("Could not read CSV file.");
+    
+    // Skip Header
+    fgetcsv($handle); 
+    
+    $imported = 0;
+    $targetImageDir = __DIR__ . '/../../images/products/';
+    if (!is_dir($targetImageDir)) mkdir($targetImageDir, 0777, true);
+
+    $stmtInsert = $pdo->prepare("INSERT INTO products (name, description, price, stock, image_url) VALUES (?, ?, ?, ?, ?)");
+    $stmtCheck = $pdo->prepare("SELECT COUNT(*) FROM products WHERE name = ?");
+
+    $pdo->beginTransaction();
+
+    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        if (count($data) < 4) continue;
+
+        $name = trim($data[0]);
+        $desc = trim($data[1]);
+        $price = floatval($data[2]);
+        $stock = intval($data[3]);
+        $image = isset($data[4]) ? trim($data[4]) : null;
+
+        if (empty($name)) continue;
+
+        // SKIP DUPLICATES (Simple logic)
+        $stmtCheck->execute([$name]);
+        if ($stmtCheck->fetchColumn() == 0) {
+            
+            // Handle Image Move if ZIP extract
+            if ($extractDir && $image) {
+                // Check 'images/' subdir first
+                $srcImg = $extractDir . 'images/' . $image;
+                if (!file_exists($srcImg)) {
+                    // Check root
+                    $srcImg = $extractDir . $image;
+                }
+                
+                if (file_exists($srcImg)) {
+                    // Copy to Main Products folder
+                    copy($srcImg, $targetImageDir . $image);
+                }
+            }
+
+            $stmtInsert->execute([$name, $desc, $price, $stock, $image]);
+            $imported++;
+        }
+    }
+    
+    $pdo->commit();
+    fclose($handle);
+}
+
+function deleteDir($dirPath) {
+    if (!is_dir($dirPath)) return;
+    $files = array_diff(scandir($dirPath), array('.', '..'));
+    foreach ($files as $file) {
+        (is_dir("$dirPath/$file")) ? deleteDir("$dirPath/$file") : unlink("$dirPath/$file");
+    }
+    return rmdir($dirPath);
 }
 ?>
 
@@ -112,12 +173,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                 </div>
             <?php endif; ?>
 
-            <p>Upload a CSV file with columns:<br><strong>Name, Description, Price, Stock, Image Filename</strong></p>
+            <h2>Upload Backup (ZIP) or CSV</h2>
+            
+            <p style="text-align:left; font-size:0.9rem; color:#555; margin-bottom: 20px;">
+                <strong>For ZIP Uploads:</strong><br>
+                Ensure the ZIP contains a <code>products.csv</code> and an <code>images/</code> folder.<br>
+                This allows you to restore products WITH their images.<br><br>
+                <strong>For CSV Uploads:</strong><br>
+                Only product text data will be imported.
+            </p>
             
             <form method="POST" enctype="multipart/form-data">
-                <input type="file" name="csv_file" class="file-input" accept=".csv" required>
+                <input type="file" name="import_file" class="file-input" accept=".zip,.csv" required>
                 <br>
-                <button type="submit" class="btn-blue">Import List</button>
+                <button type="submit" class="btn-blue">Import Data</button>
             </form>
             <br>
             <a href="product_list.php" style="color:#666;">Back</a>

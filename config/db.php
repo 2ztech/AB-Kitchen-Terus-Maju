@@ -86,10 +86,16 @@ class Database {
             // Orders Table
             "CREATE TABLE IF NOT EXISTS orders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER, -- Cashier who processed the order
-                customer_name TEXT, -- Optional, for reference
+                user_id INTEGER, -- Cashier who processed the order, NULL if guest
+                customer_name TEXT, 
+                customer_email TEXT,
+                customer_phone TEXT,
+                delivery_method TEXT DEFAULT 'pickup',
+                shipping_address TEXT,
+                payment_method TEXT DEFAULT 'manual',
+                receipt_image TEXT,
                 total_amount REAL NOT NULL DEFAULT 0.00,
-                status TEXT DEFAULT 'completed', -- 'pending', 'completed', 'cancelled'
+                status TEXT DEFAULT 'pending', -- 'pending', 'completed', 'cancelled'
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
             )",
@@ -103,6 +109,13 @@ class Database {
                 price_at_purchase REAL NOT NULL, -- Handle price changes over time
                 FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
                 FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+            )",
+
+            // Settings Table
+            "CREATE TABLE IF NOT EXISTS settings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                setting_key TEXT UNIQUE NOT NULL,
+                setting_value TEXT
             )"
         ];
 
