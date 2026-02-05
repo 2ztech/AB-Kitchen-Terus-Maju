@@ -1,37 +1,5 @@
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.content-wrapper {
-    display: flex;
-    flex: 1;
-}
-
-main {
-    background-color: #EEE2DC;
-    color: black;
-    padding: 20px;
-    min-height: calc(100vh - 120px);
-    transition: margin-left .5s;
-    flex: 1;
-}
-
-main h1 {
-    margin-bottom: 5px;
-}
-
-main hr {
-    border: 2px solid black;
-    width: 300px;
-    margin-bottom: 20px;
-}
+/* Dashboard specific styles */
+/* Global layout styles moved to main_style.css */
 
 /* Updated Menu Toggle & Header Layout */
 .dashboard-header {

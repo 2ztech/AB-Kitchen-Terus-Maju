@@ -1,7 +1,11 @@
 <?php
+/**
+ * Global Header - Loads on every page
+ * Location: /header.php
+ */
 require_once __DIR__ . '/config/config.php';
 
-// Skip session check if we're in QR flow
+// 1. Session & Login Check
 $is_qr_flow = isset($_SESSION['qr_redirect']) || 
               (basename($_SERVER['SCRIPT_NAME']) === 'event_checkin.php' && isset($_GET['event_id']));
 
@@ -10,46 +14,48 @@ if (!isset($_SESSION['user_id']) && !$is_qr_flow) {
     exit;
 }
 
-// Get complete user data from database
+// 2. Fetch User Data
 try {
-    // We only have 'username', 'role', 'is_new' in the new schema. 
-    // No profile_pic or full_name yet.
     $stmt = $pdo->prepare("SELECT username, role, is_new FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch();
 
     if (!$user) {
-        // Force logout if user no longer exists in DB
         session_destroy();
         header('Location: /index.php');
         exit;
     }
 
-    // Set session variables
     $_SESSION['username'] = $user['username'];
     $_SESSION['role'] = $user['role'];
-    $_SESSION['is_new'] = $user['is_new'];
 
-    // Determine dashboard URL based on role
+    // 3. Smart Base URL Detection (The Fix)
+    // This finds the "root" folder of your project automatically
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'];
+    
+    // Calculate the project root based on where this file (header.php) is located
+    // If header.php is in C:/xampp/htdocs/my-project/, this gets "/my-project/"
+    $project_dir = str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace('\\', '/', __DIR__));
+    $base_url = $protocol . "://" . $host . $project_dir . "/";
+
+    // Dashboard Links
     $dashboard_url = match($user['role']) {
-        'admin' => '/pages/dashboard/admin_dashboard.php',
-        'cashier' => '/pages/dashboard/cashier_dashboard.php',
-        default => '/index.php' // Fallback
+        'admin' => $base_url . 'pages/dashboard/admin_dashboard.php',
+        'cashier' => $base_url . 'pages/dashboard/cashier_dashboard.php',
+        default => $base_url . 'index.php'
     };
 
-    // Default Avatar
-    $profile_image = '/images/icons/user.png';
-
-    // Fetch Settings for Store Name
-    require_once __DIR__ . '/helpers.php'; // Ensure helpers are loaded
+    // Store Name & Logo Logic
+    require_once __DIR__ . '/helpers.php';
     $settings = get_settings($pdo);
-    $store_name = $settings['store_name'] ?? 'My Digital Store';
+    $store_name = $settings['store_name'] ?? 'AB Kitchen';
+    
+    $logo_path = !empty($settings['store_logo']) 
+        ? $base_url . 'images/settings/' . htmlspecialchars($settings['store_logo']) 
+        : $base_url . 'images/Logo.png';
 
-} catch (PDOException $e) {
-    error_log("Database error in header.php: " . $e->getMessage());
-    die("System Error");
 } catch (Exception $e) {
-    error_log("Error in header.php: " . $e->getMessage());
     die("System Error");
 }
 ?>
@@ -59,30 +65,36 @@ try {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($store_name) ?></title>
-  <link rel="stylesheet" href="/styles/header.css?v=<?= time() ?>">
-  <link rel="stylesheet" href="/styles/sidenav.css?v=<?= time() ?>">
-  <link rel="stylesheet" href="/styles/main_style.css?v=<?= time() ?>">
+  
+  <link rel="stylesheet" href="<?= $base_url ?>styles/header.css?v=<?= time() ?>">
+  <link rel="stylesheet" href="<?= $base_url ?>styles/sidenav.css?v=<?= time() ?>">
+  <link rel="stylesheet" href="<?= $base_url ?>styles/main_style.css?v=<?= time() ?>">
+  
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
   <header>
-    <div class="logo">
-      <img src="/images/Logo.png" alt="<?= htmlspecialchars($store_name) ?>">
-    </div>
+    <a href="<?= $dashboard_url ?>" class="logo">
+      <img src="<?= $logo_path ?>" alt="Logo" onerror="this.src='<?= $base_url ?>images/icons/user.png'">
+      <span><?= htmlspecialchars($store_name) ?></span>
+    </a>
+
     <nav>
-      <a href="<?= $dashboard_url ?>" class="nav-link">Dashboard</a>
       <div class="profile" onclick="toggleProfileMenu()">
-        <div class="profile-pic" style="background-image: url('<?= $profile_image ?>')"></div>
+        <div class="profile-pic" style="background-image: url('<?= $base_url ?>images/icons/user.png')"></div>
+        
         <div class="profile-menu" id="profileMenu">
           <h3><?= htmlspecialchars($_SESSION['username']) ?><br>
             <span><?= htmlspecialchars(ucfirst($_SESSION['role'])) ?></span>
           </h3>
           <ul>
             <li>
-              <img src="../../images/icons/user.png"><a href="/pages/users/user_profile.php">My Profile</a>
+              <img src="<?= $base_url ?>images/icons/user.png">
+              <a href="<?= $base_url ?>pages/users/user_profile.php">My Profile</a>
             </li>
-            <!-- Edit Profile is now part of My Profile (Change Password) -->
             <li>
-              <img src="../../images/icons/log-out.png"><a href="/logout.php">Logout</a>
+              <img src="<?= $base_url ?>images/icons/log-out.png">
+              <a href="<?= $base_url ?>logout.php">Logout</a>
             </li>
           </ul>
         </div>
@@ -94,13 +106,12 @@ try {
     function toggleProfileMenu() {
       document.getElementById("profileMenu").classList.toggle("active");
     }
-    
     // Close menu when clicking outside
     document.addEventListener('click', function(e) {
-      const profileMenu = document.getElementById("profileMenu");
+      const menu = document.getElementById("profileMenu");
       const profile = document.querySelector(".profile");
-      if (!profile.contains(e.target) && !profileMenu.contains(e.target)) {
-        profileMenu.classList.remove("active");
+      if (!profile.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.remove("active");
       }
     });
   </script>

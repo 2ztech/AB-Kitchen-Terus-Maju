@@ -100,6 +100,7 @@ $page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders
                     <th>Total</th>
                     <th>Status</th>
                     <th>Receipt</th>
+                    <th>Order Details</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -127,6 +128,11 @@ $page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders
                             <?php endif; ?>
                         </td>
                         <td>
+                            <button type="button" onclick="viewItems(<?= $o['id'] ?>)" class="btn btn-primary" style="padding:6px 12px;font-size:0.85em;">
+                                <i class='bx bx-list-ul'></i> View Items
+                            </button>
+                        </td>
+                        <td>
                             <form method="POST" class="status-form">
                                 <input type="hidden" name="order_id" value="<?= $o['id'] ?>">
                                 <input type="hidden" name="update_status" value="1">
@@ -145,6 +151,55 @@ $page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders
             </tbody>
         </table>
     </main>
+
+    <!-- View Items Modal -->
+    <div id="itemsModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5);">
+        <div style="background:white;margin:5% auto;padding:25px;width:90%;max-width:600px;border-radius:12px;box-shadow:0 5px 25px rgba(0,0,0,0.2);position:relative;">
+            <span onclick="closeModal()" style="position:absolute;top:15px;right:20px;font-size:28px;cursor:pointer;color:#aaa;">&times;</span>
+            <h2 style="margin-top:0;margin-bottom:20px;color:#333;">Order Details</h2>
+            <div id="modalContent">Loading...</div>
+        </div>
+    </div>
+
     <?php include '../../footer.php'; ?>
+    
+    <script>
+        function viewItems(orderId) {
+            const modal = document.getElementById('itemsModal');
+            const content = document.getElementById('modalContent');
+            
+            modal.style.display = 'block';
+            content.innerHTML = '<div style="text-align:center;padding:20px;"><i class="bx bx-loader-alt bx-spin" style="font-size:2rem;color:#888;"></i><p>Loading items...</p></div>';
+            
+            // Fetch items
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            
+            fetch('ajax_get_items.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(html => {
+                content.innerHTML = html;
+            })
+            .catch(err => {
+                content.innerHTML = '<p style="color:red">Error loading items.</p>';
+                console.error(err);
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('itemsModal').style.display = 'none';
+        }
+
+        // Close on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('itemsModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>

@@ -142,40 +142,7 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
     <link rel="stylesheet" href="../../styles/admin_dashboard.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <style>
-        .settings-layout { display: flex; gap: 20px; max-width: 1000px; margin: 20px auto; }
-        .settings-sidebar { width: 250px; background: white; padding: 20px; border-radius: 8px; height: fit-content; }
-        .tab-btn { display: block; width: 100%; padding: 15px; text-align: left; background: none; border: none; border-bottom: 1px solid #eee; cursor: pointer; font-size: 1rem; color: #555; transition: 0.2s; }
-        .tab-btn:hover { background: #f9f9f9; color: var(--accent-color); }
-        .tab-btn.active { background: #e3f2fd; color: #007bff; font-weight: bold; border-left: 4px solid #007bff; }
-        .tab-btn i { margin-right: 10px; width: 20px; text-align: center; }
-
-        .settings-content { flex: 1; background: white; padding: 40px; border-radius: 8px; }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
-        .section-header { border-bottom: 2px solid #333; display: inline-block; padding-bottom: 5px; margin-bottom: 25px; margin-top: 0; }
-        
-        .form-group { margin-bottom: 25px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        
-        /* Adjusted Toggle Switch Size */
-        .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #28a745; }
-        input:checked + .slider:before { transform: translateX(20px); }
-        
-        .time-group { display: flex; gap: 15px; align-items: center; }
-        .btn-save { background: #007bff; color: white; padding: 15px 30px; border: none; border-radius: 6px; cursor: pointer; font-size: 1.1rem; float: right; margin-top: 20px; }
-        
-        /* Modal */
-        .modal { display:none; position:fixed; z-index:999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); }
-        .modal-content { background:#fff; margin:5% auto; padding:20px; width:80%; max-width:600px; border-radius:8px; }
-        .img-container { max-height:400px; overflow:hidden; }
-        .qr-preview { max-width: 200px; border: 1px solid #ddd; padding: 5px; margin-top: 10px; }
-    </style>
+    <link rel="stylesheet" href="../../styles/settings.css">
 </head>
 <body>
     <main class="dashboard-container" id="main">

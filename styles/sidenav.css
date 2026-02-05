@@ -1,47 +1,61 @@
 .sidenav {
-    height: calc(100vh - 120px);
+    height: calc(100vh - 70px);
+    /* Adjust for header height */
     width: 0;
     position: fixed;
-    top: 120px;
+    top: 70px;
     left: 0;
-    background-color: #bab2b5;
+    background-color: #fff;
     overflow-x: hidden;
-    transition: 0.5s;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     padding-top: 20px;
-    z-index: 1;
+    z-index: 99;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    border-right: 1px solid #eee;
 }
 
 .sidenav a {
-    padding: 8px 8px 8px 32px;
+    padding: 12px 25px;
     text-decoration: none;
-    font-size: 20px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
+    font-size: 1rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
 }
 
 .sidenav a:hover {
-    color: #000000;
+    color: var(--accent-color, #ff6b6b);
+    background-color: #f8f9fa;
+    border-left-color: var(--accent-color, #ff6b6b);
+}
+
+.sidenav a i {
+    font-size: 1.2rem;
+    width: 20px;
+    text-align: center;
 }
 
 /* Submenu styles */
-.has-submenu,
-.student-submenu {
+.has-submenu {
     position: relative;
+    cursor: pointer;
 }
 
 .submenu {
     display: none;
-    padding-left: 20px;
-    background-color: #bab2b5;
+    background-color: #f8f9fa;
+    padding: 5px 0;
 }
 
 .submenu a {
-    font-size: 16px;
-    padding: 8px 8px 8px 20px;
+    font-size: 0.95rem;
+    padding-left: 55px;
+    /* Indent for hierarchy */
+    border-left: none;
 }
-
-
 
 .submenu.show {
     display: block;
