@@ -114,7 +114,7 @@ try {
             <div style="background:#d4edda;color:#155724;padding:10px;border-radius:4px;margin-bottom:15px;"><?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
 
-        <a href="add_user.php" class="btn-add">+ Add New User</a>
+        <a href="/users/add" class="btn-add">+ Add New User</a>
 
         <div class="user-list-container">
             <table>
