@@ -2,11 +2,11 @@
 
 function getDashboardUrl($role) {
     $dashboards = [
-        'customer' => 'pages/dashboard/customer_dashboard.php',
-        'cashier' => 'pages/dashboard/cashier_dashboard.php',
-        'admin' => 'pages/dashboard/admin_dashboard.php'
+        'customer' => '/',          // Customers go to Homepage
+        'cashier' => '/admin',      // Cashiers share Admin dashboard for now, or '/admin' if they have restricted view there
+        'admin' => '/admin'         // Clean URL mapped in .htaccess
     ];
-    return $dashboards[$role] ?? 'pages/dashboard/customer_dashboard.php';
+    return $dashboards[$role] ?? '/';
 }
 
 function redirectIfNotLoggedIn() {

@@ -35,9 +35,9 @@ $store_name = $settings['store_name'] ?? 'My Digital Store';
     </div>
     
     <nav class="shop-nav">
-        <a href="/index.php">Home</a>
-        <a href="/pages/shop/track_order.php">My Orders</a>
-        <a href="/pages/shop/cart.php" class="cart-icon">
+        <a href="/">Home</a>
+        <a href="/track-order">My Orders</a>
+        <a href="/cart" class="cart-icon">
             <i class='bx bxs-cart-alt'></i> Cart
             <?php if ($cart_count > 0): ?>
                 <span class="cart-badge"><?= $cart_count ?></span>

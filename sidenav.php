@@ -5,31 +5,31 @@
         <div class="has-submenu">
             <a href="javascript:void(0)" onclick="toggleSubmenu(this)">Products</a>
             <div class="submenu">
-                <a href="/pages/products/product_list.php">Manage Products</a>
-                <a href="/pages/products/add_product.php">Add New Product</a>
+                <a href="/products">Manage Products</a>
+                <a href="/products/add">Add New Product</a>
             </div>
         </div>
 
         <div class="has-submenu">
             <a href="javascript:void(0)" onclick="toggleSubmenu(this)">Orders</a>
             <div class="submenu">
-                <a href="/pages/orders/list.php">All Orders</a>
-                <a href="/pages/orders/list.php?status=pending">Pending</a>
-                <a href="/pages/orders/list.php?status=processing">Processing</a>
-                <a href="/pages/orders/list.php?status=completed">Completed</a>
-                <a href="/pages/orders/list.php?status=cancelled">Cancelled</a>
+                <a href="/orders">All Orders</a>
+                <a href="/orders?status=pending">Pending</a>
+                <a href="/orders?status=processing">Processing</a>
+                <a href="/orders?status=completed">Completed</a>
+                <a href="/orders?status=cancelled">Cancelled</a>
             </div>
         </div>
         
         <div class="has-submenu">
             <a href="javascript:void(0)" onclick="toggleSubmenu(this)">Users</a>
             <div class="submenu">
-                <a href="/pages/users/user_list.php">Manage Users</a>
+                <a href="/users">Manage Users</a>
             </div>
         </div>
 
         <?php if ($_SESSION['role'] === 'admin'): ?>
-        <a href="/pages/settings/settings.php">Settings</a>
+        <a href="/settings">Settings</a>
         <?php endif; ?>
 
         <!-- Cashier Menu -->
@@ -39,17 +39,17 @@
         </div>
         
         <div class="has-submenu">
-            <a href="/pages/products/product_list.php">View Products</a>
+            <a href="/products">View Products</a>
         </div>
 
         <div class="has-submenu">
             <a href="javascript:void(0)" onclick="toggleSubmenu(this)">Orders</a>
             <div class="submenu">
-                <a href="/pages/orders/list.php">All Orders</a>
-                <a href="/pages/orders/list.php?status=pending">Pending</a>
-                <a href="/pages/orders/list.php?status=processing">Processing</a>
-                <a href="/pages/orders/list.php?status=completed">Completed</a>
-                <a href="/pages/orders/list.php?status=cancelled">Cancelled</a>
+                <a href="/orders">All Orders</a>
+                <a href="/orders?status=pending">Pending</a>
+                <a href="/orders?status=processing">Processing</a>
+                <a href="/orders?status=completed">Completed</a>
+                <a href="/orders?status=cancelled">Cancelled</a>
             </div>
         </div>
         <?php endif; ?>

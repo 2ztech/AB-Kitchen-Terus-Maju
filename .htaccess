@@ -1,0 +1,43 @@
+RewriteEngine On
+
+# 1. Block access to sensitive DB files
+<Files "*.db">
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# 2. Setup Clean URLs (Hide .php extension)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# 3. Route specific shortcuts
+
+# Auth & Main
+RewriteRule ^admin$ pages/dashboard/admin_dashboard.php [L]
+RewriteRule ^login$ login.php [L]
+
+# Shop
+RewriteRule ^track-order$ pages/shop/track_order.php [L]
+RewriteRule ^cart$ pages/shop/cart.php [L]
+RewriteRule ^check-status$ pages/shop/check_status.php [L]
+RewriteRule ^checkout$ pages/shop/checkout.php [L]
+
+# Products
+RewriteRule ^products$ pages/products/product_list.php [L]
+RewriteRule ^products/add$ pages/products/add_product.php [L]
+RewriteRule ^products/edit$ pages/products/edit_product.php [L]
+RewriteRule ^products/import$ pages/products/import_products.php [L]
+RewriteRule ^products/export$ pages/products/export_products.php [L]
+
+# Orders
+RewriteRule ^orders$ pages/orders/list.php [L]
+
+# Users
+RewriteRule ^users$ pages/users/user_list.php [L]
+RewriteRule ^users/add$ pages/users/add_user.php [L]
+RewriteRule ^users/edit$ pages/users/edit_user.php [L]
+RewriteRule ^users/profile$ pages/users/user_profile.php [L]
+
+# Settings
+RewriteRule ^settings$ pages/settings/settings.php [L]
