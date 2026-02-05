@@ -13,10 +13,33 @@ if (session_status() === PHP_SESSION_NONE) {
 
 
 
-// Fetch Products (Active only can be filtered if needed, currently all)
+// Fetch Categories using SQLite compatible query
+$stmtCat = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+$categories = $stmtCat->fetchAll();
+
+// Filter Parameters
+$category_filter = $_GET['category'] ?? '';
+$max_price = $_GET['max_price'] ?? '';
+
+// Build Query
+$sql = "SELECT * FROM products WHERE 1=1";
+$params = [];
+
+if ($category_filter) {
+    $sql .= " AND category_id = ?";
+    $params[] = $category_filter;
+}
+
+if ($max_price) {
+    $sql .= " AND price <= ?";
+    $params[] = $max_price;
+}
+
+$sql .= " ORDER BY name ASC";
+
 try {
-    // Only show products with stock > 0 optionally, but for now show all
-    $stmt = $pdo->query("SELECT * FROM products ORDER BY name ASC");
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     $products = $stmt->fetchAll();
 } catch (PDOException $e) {
     die("Error loading products.");
@@ -89,28 +112,65 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
         <p>Order your favorite traditional Kuih Raya online.</p>
     </section>
 
-    <div class="container">
+    <div class="container shop-layout">
+        
+        <!-- Sidebar Filter -->
+        <aside class="shop-sidebar">
+            <div class="filter-group">
+                <h3>Categories</h3>
+                <a href="index.php" class="<?= $category_filter == '' ? 'active' : '' ?>">All Categories</a>
+                <?php foreach ($categories as $cat): ?>
+                    <a href="?category=<?= $cat['id'] ?>&max_price=<?= $max_price ?>" 
+                       class="<?= $category_filter == $cat['id'] ? 'active' : '' ?>">
+                        <?= htmlspecialchars($cat['name']) ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="filter-group">
+                <h3>Price Filter</h3>
+                <form method="GET" action="index.php">
+                    <?php if ($category_filter): ?>
+                        <input type="hidden" name="category" value="<?= $category_filter ?>">
+                    <?php endif; ?>
+                    <label>Max Price: RM <span id="priceVal"><?= $max_price ? $max_price : '100' ?></span></label>
+                    <input type="range" name="max_price" min="0" max="100" value="<?= $max_price ? $max_price : '100' ?>" 
+                           oninput="document.getElementById('priceVal').innerText = this.value">
+                    <button type="submit" class="btn-filter">Apply</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Product Grid -->
         <div class="product-grid">
-            <?php foreach ($products as $p): ?>
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="<?= $p['image_url'] ? 'images/product/' . htmlspecialchars($p['image_url']) : 'images/icons/no-image.png' ?>" 
-                             alt="<?= htmlspecialchars($p['name']) ?>"
-                             onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+            <?php if (count($products) > 0): ?>
+                <?php foreach ($products as $p): ?>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="<?= $p['image_url'] ? 'images/product/' . htmlspecialchars($p['image_url']) : 'images/icons/no-image.png' ?>" 
+                                 alt="<?= htmlspecialchars($p['name']) ?>"
+                                 onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title"><?= htmlspecialchars($p['name']) ?></h3>
+                            <p class="product-desc"><?= htmlspecialchars(substr($p['description'], 0, 80)) ?>...</p>
+                            <span class="product-price">RM <?= number_format($p['price'], 2) ?></span>
+                            
+                            <?php if ($p['stock'] > 0): ?>
+                                <button onclick="addToCart(<?= $p['id'] ?>, this)" class="btn-add-cart">Add to Cart</button>
+                            <?php else: ?>
+                                <button class="btn-add-cart" style="background:#ccc;cursor:not-allowed;" disabled>Out of Stock</button>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <div class="product-info">
-                        <h3 class="product-title"><?= htmlspecialchars($p['name']) ?></h3>
-                        <p class="product-desc"><?= htmlspecialchars(substr($p['description'], 0, 80)) ?>...</p>
-                        <span class="product-price">RM <?= number_format($p['price'], 2) ?></span>
-                        
-                        <?php if ($p['stock'] > 0): ?>
-                            <button onclick="addToCart(<?= $p['id'] ?>, this)" class="btn-add-cart">Add to Cart</button>
-                        <?php else: ?>
-                            <button class="btn-add-cart" style="background:#ccc;cursor:not-allowed;" disabled>Out of Stock</button>
-                        <?php endif; ?>
-                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #777;">
+                    <i class='bx bx-search' style="font-size:3rem;margin-bottom:10px;"></i>
+                    <p>No products found matching your filter.</p>
+                    <a href="index.php" style="color:var(--accent-color);text-decoration:none;">Clear Filters</a>
                 </div>
-            <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 
