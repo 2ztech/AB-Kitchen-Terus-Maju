@@ -10,7 +10,7 @@ require_once '../../sidenav.php';
 
 // Admin Only
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: product_list.php"); // or index
+    header("Location: /products"); // or index
     exit();
 }
 
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <button type="submit" class="btn-submit">Add Product</button>
             </form>
-            <a href="product_list.php" style="display:block;text-align:center;margin-top:15px;color:#666;">Back to List</a>
+            <a href="/products" style="display:block;text-align:center;margin-top:15px;color:#666;">Back to List</a>
         </div>
     </main>
     <?php include '../../footer.php'; ?>

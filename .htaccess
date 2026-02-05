@@ -22,6 +22,8 @@ RewriteRule ^track-order$ pages/shop/track_order.php [L]
 RewriteRule ^cart$ pages/shop/cart.php [L]
 RewriteRule ^check-status$ pages/shop/check_status.php [L]
 RewriteRule ^checkout$ pages/shop/checkout.php [L]
+RewriteRule ^order-success$ pages/shop/order_success.php [L]
+RewriteRule ^closed$ pages/shop/closed.php [L]
 
 # Products
 RewriteRule ^products$ pages/products/product_list.php [L]
@@ -41,3 +43,6 @@ RewriteRule ^users/profile$ pages/users/user_profile.php [L]
 
 # Settings
 RewriteRule ^settings$ pages/settings/settings.php [L]
+
+# Images
+RewriteRule ^receipts/(.+)$ images/receipts/$1 [L]

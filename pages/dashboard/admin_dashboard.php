@@ -124,7 +124,7 @@ try {
                     <div>
                         <i class='bx bx-error-circle'></i> <strong>Warning:</strong> <?= $low_stock_count ?> items low stock.
                     </div>
-                    <a href="../products/product_list.php" style="color:white;text-decoration:underline;">Check</a>
+                    <a href="/products" style="color:white;text-decoration:underline;">Check</a>
                 </div>
                 <?php endif; ?>
 
@@ -132,7 +132,7 @@ try {
                 <div style="background:white;padding:20px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
                         <h3 class="section-title" style="margin:0;">Recent Orders</h3>
-                        <a href="../orders/list.php" class="btn-link">View All</a>
+                        <a href="/orders" class="btn-link">View All</a>
                     </div>
                     <table style="width:100%;border-collapse:collapse;font-size:0.9em;">
                         <tbody>

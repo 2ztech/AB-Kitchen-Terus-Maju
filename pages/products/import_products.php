@@ -1,8 +1,4 @@
 <?php
-/**
- * Kuih Raya - Import Products (ZIP/CSV)
- * Location: pages/products/import_products.php
- */
 
 require_once '../../config/config.php';
 require_once '../../header.php';
@@ -10,7 +6,7 @@ require_once '../../sidenav.php';
 
 // Authentication: Admin Only
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: product_list.php");
+    header("Location: /products");
     exit();
 }
 
@@ -189,7 +185,7 @@ function deleteDir($dirPath) {
                 <button type="submit" class="btn-blue">Import Data</button>
             </form>
             <br>
-            <a href="product_list.php" style="color:#666;">Back</a>
+            <a href="/products" style="color:#666;">Back</a>
         </div>
     </main>
     <?php include '../../footer.php'; ?>

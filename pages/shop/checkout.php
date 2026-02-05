@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Redirect if cart empty
 if (empty($_SESSION['cart'])) {
-    header("Location: cart.php");
+    header("Location: /cart");
     exit();
 }
 
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 unset($_SESSION['cart']);
                 
                 // Redirect
-                header("Location: order_success.php?id=" . $order_id);
+                header("Location: /order-success?id=" . $order_id);
                 exit();
 
             } catch (Exception $e) {

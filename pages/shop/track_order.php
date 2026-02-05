@@ -98,7 +98,7 @@ $settings = get_settings($pdo);
                     </div>
                 </div>
                 <div>
-                    <a href="order_success.php?id=<?= $o['id'] ?>" class="btn-view">View Receipt</a>
+                    <a href="/order-success?id=<?= $o['id'] ?>" class="btn-view">View Receipt</a>
                 </div>
             </div>
             <?php endforeach; ?>

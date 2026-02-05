@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <button type="submit" class="btn-submit">Create User</button>
             </form>
-            <a href="user_list.php" class="back-link">Back to User List</a>
+            <a href="/users" class="back-link">Back to User List</a>
         </div>
     </main>
 

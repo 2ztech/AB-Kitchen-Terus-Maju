@@ -91,6 +91,10 @@ $page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders
             <div style="background:#d4edda;color:#155724;padding:10px;margin-bottom:15px;border-radius:4px;"><?= $success_msg ?></div>
         <?php endif; ?>
 
+        <?php if (isset($error_msg)): ?>
+            <div style="background:#f8d7da;color:#721c24;padding:10px;margin-bottom:15px;border-radius:4px;"><?= $error_msg ?></div>
+        <?php endif; ?>
+
         <table class="data-table">
             <thead>
                 <tr>
@@ -122,7 +126,7 @@ $page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders
                         </td>
                         <td>
                             <?php if (!empty($o['receipt_image'])): ?>
-                                <a href="../../images/receipts/<?= htmlspecialchars($o['receipt_image']) ?>" target="_blank" class="btn-link">View Receipt</a>
+                                <a href="/receipts/<?= htmlspecialchars($o['receipt_image']) ?>" target="_blank" class="btn-link">View Receipt</a>
                             <?php else: ?>
                                 <span style="color:#999;">-</span>
                             <?php endif; ?>
@@ -133,7 +137,7 @@ $page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders
                             </button>
                         </td>
                         <td>
-                            <form method="POST" class="status-form">
+                            <form method="POST" action="" style="flex:1;display:flex;">
                                 <input type="hidden" name="order_id" value="<?= $o['id'] ?>">
                                 <input type="hidden" name="update_status" value="1">
                                 <select name="status" class="status-select">
@@ -175,7 +179,7 @@ $page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders
             const formData = new FormData();
             formData.append('order_id', orderId);
             
-            fetch('ajax_get_items.php', {
+            fetch('/pages/orders/ajax_get_items.php', {
                 method: 'POST',
                 body: formData
             })

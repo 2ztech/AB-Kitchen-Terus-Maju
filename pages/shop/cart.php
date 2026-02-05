@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['clear_cart'])) {
         unset($_SESSION['cart']);
     }
-    header("Location: cart.php");
+    header("Location: /cart");
     exit();
 }
 
@@ -207,7 +207,7 @@ $settings = get_settings($pdo);
                 <form method="POST" style="display:inline;margin-right:20px;">
                     <button type="submit" name="clear_cart" style="background:none;border:none;color:#999;cursor:pointer;text-decoration:underline;">Clear Cart</button>
                 </form>
-                <a href="checkout.php" class="btn-checkout">Proceed to Checkout</a>
+                <a href="/checkout" class="btn-checkout">Proceed to Checkout</a>
             </div>
         <?php endif; ?>
     </div>

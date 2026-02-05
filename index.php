@@ -55,7 +55,7 @@ $settings = get_settings($pdo);
 $is_staff = isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'cashier']);
 
 if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
-    include 'pages/shop/closed.php';
+    include '/closed';
     exit();
 }
 ?>

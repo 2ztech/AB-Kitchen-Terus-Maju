@@ -1,8 +1,4 @@
 <?php
-/**
- * Kuih Raya - Product List
- * Location: pages/products/product_list.php
- */
 
 require_once '../../config/config.php';
 require_once '../../header.php';
@@ -50,7 +46,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product List - Kuih Raya</title>
+    <title>Product List</title>
     <link rel="stylesheet" href="../../styles/admin_dashboard.css">
     <style>
         .product-table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
@@ -80,9 +76,9 @@ try {
 
         <?php if ($isAdmin): ?>
             <div style="margin-bottom:15px;">
-                <a href="add_product.php" class="btn-add" style="background:#28a745;color:white;padding:10px 15px;text-decoration:none;border-radius:4px;display:inline-block;">+ Add New Product</a>
-                <a href="export_products.php" class="btn-action" style="background:#17a2b8;padding:10px 15px;float:right;margin-left:5px;">Export CSV</a>
-                <a href="import_products.php" class="btn-action" style="background:#6c757d;padding:10px 15px;float:right;">Import CSV</a>
+                <a href="/products/add" class="btn-add" style="background:#28a745;color:white;padding:10px 15px;text-decoration:none;border-radius:4px;display:inline-block;">+ Add New Product</a>
+                <a href="/products/export" class="btn-action" style="background:#17a2b8;padding:10px 15px;float:right;margin-left:5px;">Export CSV</a>
+                <a href="/products/import" class="btn-action" style="background:#6c757d;padding:10px 15px;float:right;">Import CSV</a>
             </div>
         <?php endif; ?>
 
@@ -134,7 +130,7 @@ try {
                     </td>
                     <?php if ($isAdmin): ?>
                     <td>
-                        <a href="edit_product.php?id=<?= $p['id'] ?>" class="btn-action btn-edit">Edit</a>
+                        <a href="/products/edit?id=<?= $p['id'] ?>" class="btn-action btn-edit">Edit</a>
                         <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this product?');">
                             <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
                             <button type="submit" name="delete_product" class="btn-action btn-delete">Delete</button>

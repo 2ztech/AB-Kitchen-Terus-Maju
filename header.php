@@ -90,7 +90,7 @@ try {
           <ul>
             <li>
               <img src="<?= $base_url ?>images/icons/user.png">
-              <a href="<?= $base_url ?>pages/users/user_profile.php">My Profile</a>
+              <a href="<?= $base_url ?>/users/profile">My Profile</a>
             </li>
             <li>
               <img src="<?= $base_url ?>images/icons/log-out.png">
