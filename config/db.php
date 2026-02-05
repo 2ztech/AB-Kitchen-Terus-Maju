@@ -72,15 +72,24 @@ class Database {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )",
 
+            // Categories Table
+            "CREATE TABLE IF NOT EXISTS categories (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE
+            )",
+
             // Products Table
             "CREATE TABLE IF NOT EXISTS products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 description TEXT,
                 price REAL NOT NULL,
+                stock_price REAL DEFAULT 0.00,
                 stock INTEGER DEFAULT 0,
+                category_id INTEGER,
                 image_url TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
             )",
 
             // Orders Table

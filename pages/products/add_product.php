@@ -17,11 +17,17 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 $error = '';
 $success = '';
 
+// Fetch Categories
+$stmtCat = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+$categories = $stmtCat->fetchAll();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $desc = trim($_POST['description']);
-    $price = $_POST['price'];
+    $price = $_POST['price']; // Sell Price
+    $stock_price = $_POST['stock_price'] ?? 0.00; // Cost Price
     $stock = $_POST['stock'];
+    $category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
     
     // Image Upload
     $image_url = null;
@@ -53,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$error) {
         try {
-            $stmt = $pdo->prepare("INSERT INTO products (name, description, price, stock, image_url) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$name, $desc, $price, $stock, $image_url]);
+            $stmt = $pdo->prepare("INSERT INTO products (name, description, price, stock_price, stock, category_id, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$name, $desc, $price, $stock_price, $stock, $category_id, $image_url]);
             $success = "Product added successfully!";
         } catch (PDOException $e) {
             $error = "Database Error: " . $e->getMessage();
@@ -104,9 +110,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label>Description</label>
                     <textarea name="description" rows="3"></textarea>
                 </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category_id" class="form-control" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;">
+                        <option value="">-- No Category --</option>
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
                 <div class="form-group" style="display:flex;gap:20px;">
                     <div style="flex:1;">
-                        <label>Price (RM)</label>
+                        <label>Stock Price (Cost)</label>
+                        <input type="number" step="0.01" name="stock_price" placeholder="0.00">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Sell Price (RM)</label>
                         <input type="number" step="0.01" name="price" required>
                     </div>
                     <div style="flex:1;">

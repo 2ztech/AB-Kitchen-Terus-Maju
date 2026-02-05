@@ -160,6 +160,7 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
                 <button type="button" class="tab-btn" onclick="openTab('payment')"><i class='bx bxs-bank'></i> Payment</button>
                 <button type="button" class="tab-btn" onclick="openTab('whatsapp')"><i class='bx bxl-whatsapp'></i> WhatsApp</button>
                 <button type="button" class="tab-btn" onclick="openTab('promo')"><i class='bx bxs-megaphone'></i> Promotion</button>
+                <button type="button" class="tab-btn" onclick="openTab('categories')"><i class='bx bxs-category'></i> Categories</button>
                 <button type="button" class="tab-btn" onclick="openTab('customization')"><i class='bx bxs-palette'></i> Customization</button>
             </div>
 
@@ -249,6 +250,20 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
                     </div>
                 </div>
 
+                <!-- Categories Tab -->
+                <div id="categories" class="tab-pane">
+                    <h2 class="section-header">Product Categories</h2>
+                    <div style="display:flex;gap:10px;margin-bottom:20px;">
+                        <input type="text" id="newCategory" class="form-control" placeholder="New Category Name (e.g. Cookies)" style="flex:1;">
+                        <button type="button" class="btn-save" style="width:auto;" onclick="addCategory()">Add</button>
+                    </div>
+                    
+                    <div id="categoryList" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:10px;">
+                        <!-- JS Loaded -->
+                        <p style="color:#666;">Loading categories...</p>
+                    </div>
+                </div>
+
                 <!-- Customization Tab -->
                 <div id="customization" class="tab-pane">
                     <h2 class="section-header">Store Customization</h2>
@@ -298,6 +313,66 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             event.currentTarget.classList.add('active');
+            
+            if (tabId === 'categories') {
+                loadCategories();
+            }
+        }
+
+        // Category Manager
+        function loadCategories() {
+            fetch('ajax_categories.php', { method: 'POST', body: new URLSearchParams({action: 'list'}) })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    const list = document.getElementById('categoryList');
+                    list.innerHTML = '';
+                    if (res.data.length === 0) list.innerHTML = '<p style="color:#888;">No categories yet.</p>';
+                    
+                    res.data.forEach(cat => {
+                        const div = document.createElement('div');
+                        div.style.cssText = 'background:white;padding:10px;border:1px solid #ddd;border-radius:6px;display:flex;justify-content:space-between;align-items:center;';
+                        div.innerHTML = `<strong>${cat.name}</strong> <button type="button" onclick="deleteCategory(${cat.id})" style="background:#dc3545;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;"><i class='bx bx-trash'></i></button>`;
+                        list.appendChild(div);
+                    });
+                }
+            });
+        }
+
+        function addCategory() {
+            const input = document.getElementById('newCategory');
+            const name = input.value.trim();
+            if (!name) return;
+
+            fetch('ajax_categories.php', { 
+                method: 'POST', 
+                body: new URLSearchParams({action: 'add', name: name}) 
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    input.value = '';
+                    loadCategories();
+                } else {
+                    alert(res.message);
+                }
+            });
+        }
+
+        function deleteCategory(id) {
+            if(!confirm('Delete this category?')) return;
+            fetch('ajax_categories.php', { 
+                method: 'POST', 
+                body: new URLSearchParams({action: 'delete', id: id}) 
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    loadCategories();
+                } else {
+                    alert(res.message);
+                }
+            });
         }
 
         const qrInput = document.getElementById('qrInput');

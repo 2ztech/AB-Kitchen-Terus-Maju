@@ -31,11 +31,17 @@ try {
 $error = '';
 $success = '';
 
+// Fetch Categories
+$stmtCat = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+$categories = $stmtCat->fetchAll();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $desc = trim($_POST['description']);
     $price = $_POST['price'];
+    $stock_price = $_POST['stock_price'] ?? 0.00;
     $stock = $_POST['stock'];
+    $category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
     $new_image = $product['image_url'];
 
     // Image Upload
@@ -71,8 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$error) {
         try {
-            $stmt = $pdo->prepare("UPDATE products SET name = ?, description = ?, price = ?, stock = ?, image_url = ? WHERE id = ?");
-            $stmt->execute([$name, $desc, $price, $stock, $new_image, $id]);
+            $stmt = $pdo->prepare("UPDATE products SET name = ?, description = ?, price = ?, stock_price = ?, stock = ?, category_id = ?, image_url = ? WHERE id = ?");
+            $stmt->execute([$name, $desc, $price, $stock_price, $stock, $category_id, $new_image, $id]);
             $success = "Product updated!";
             // Refresh data
             $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
@@ -127,9 +133,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label>Description</label>
                     <textarea name="description" rows="3"><?= htmlspecialchars($product['description']) ?></textarea>
                 </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category_id" class="form-control" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;">
+                        <option value="">-- No Category --</option>
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?= $cat['id'] ?>" <?= ($product['category_id'] ?? '') == $cat['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($cat['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
                 <div class="form-group" style="display:flex;gap:20px;">
                     <div style="flex:1;">
-                        <label>Price (RM)</label>
+                        <label>Stock Price (Cost)</label>
+                        <input type="number" step="0.01" name="stock_price" value="<?= $product['stock_price'] ?? '0.00' ?>" placeholder="0.00">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Sell Price (RM)</label>
                         <input type="number" step="0.01" name="price" value="<?= $product['price'] ?>" required>
                     </div>
                     <div style="flex:1;">

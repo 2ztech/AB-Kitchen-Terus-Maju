@@ -38,7 +38,7 @@ if ($isAdmin && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_pr
 
 // Fetch Products
 try {
-    $stmt = $pdo->query("SELECT * FROM products ORDER BY name ASC");
+    $stmt = $pdo->query("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.name ASC");
     $products = $stmt->fetchAll();
 } catch (PDOException $e) {
     die("Error: " . $e->getMessage());
@@ -91,7 +91,9 @@ try {
                 <tr>
                     <th>Image</th>
                     <th>Name</th>
+                    <th>Category</th>
                     <th>Price (RM)</th>
+                    <?php if ($isAdmin): ?><th>Cost / Profit</th><?php endif; ?>
                     <th>Stock</th>
                     <?php if ($isAdmin): ?><th>Actions</th><?php endif; ?>
                 </tr>
@@ -110,7 +112,23 @@ try {
                         <strong><?= htmlspecialchars($p['name']) ?></strong><br>
                         <small style="color:#666;"><?= htmlspecialchars(substr($p['description'], 0, 50)) ?>...</small>
                     </td>
+                    <td>
+                        <?php if (!empty($p['category_name'])): ?>
+                            <span style="background:#eef;padding:2px 8px;border-radius:10px;font-size:0.8em;color:#44d;"><?= htmlspecialchars($p['category_name']) ?></span>
+                        <?php else: ?>
+                            <span style="color:#999;font-size:0.8em;">-</span>
+                        <?php endif; ?>
+                    </td>
                     <td><?= number_format($p['price'], 2) ?></td>
+                    <?php if ($isAdmin): ?>
+                    <td>
+                        <small style="color:#666;">Cost: <?= number_format($p['stock_price'], 2) ?></small><br>
+                        <?php $profit = $p['price'] - $p['stock_price']; ?>
+                        <strong style="color:<?= $profit >= 0 ? 'green' : 'red' ?>;">
+                            Profit: <?= number_format($profit, 2) ?>
+                        </strong>
+                    </td>
+                    <?php endif; ?>
                     <td class="<?= $p['stock'] < 10 ? 'stock-low' : 'stock-ok' ?>">
                         <?= $p['stock'] ?>
                     </td>

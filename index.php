@@ -11,25 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Handle Add to Cart
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
-    $p_id = $_POST['product_id'];
-    $qty = 1; // Default add 1
-    
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
-    
-    if (isset($_SESSION['cart'][$p_id])) {
-        $_SESSION['cart'][$p_id] += $qty;
-    } else {
-        $_SESSION['cart'][$p_id] = $qty;
-    }
-    
-    // Refresh to show updated cart count
-    header("Location: index.php");
-    exit();
-}
+
 
 // Fetch Products (Active only can be filtered if needed, currently all)
 try {
@@ -122,10 +104,7 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
                         <span class="product-price">RM <?= number_format($p['price'], 2) ?></span>
                         
                         <?php if ($p['stock'] > 0): ?>
-                            <form method="POST">
-                                <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
-                                <button type="submit" name="add_to_cart" class="btn-add-cart">Add into Cart</button>
-                            </form>
+                            <button onclick="addToCart(<?= $p['id'] ?>, this)" class="btn-add-cart">Add to Cart</button>
                         <?php else: ?>
                             <button class="btn-add-cart" style="background:#ccc;cursor:not-allowed;" disabled>Out of Stock</button>
                         <?php endif; ?>
@@ -135,8 +114,72 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
         </div>
     </div>
 
+    <!-- Toast Notification -->
+    <div id="toast" style="visibility:hidden;min-width:250px;margin-left:-125px;background-color:#333;color:#fff;text-align:center;border-radius:2px;padding:16px;position:fixed;z-index:1;left:50%;bottom:30px;font-size:17px;">
+        Item added to cart
+    </div>
+
     <!-- Simple Footer -->
     <?php include 'footer.php'; ?>
 
+    <script>
+        function addToCart(productId, btnElement) {
+            // Visual Feedback
+            const originalText = btnElement.innerText;
+            btnElement.innerText = "Adding...";
+            btnElement.disabled = true;
+
+            const formData = new FormData();
+            formData.append('product_id', productId);
+            formData.append('quantity', 1);
+
+            fetch('pages/shop/ajax_add_to_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update Cart Count Badge
+                    let badge = document.querySelector('.cart-badge');
+                    if (!badge) {
+                        // Create badge if it doesn't exist
+                        const cartLink = document.querySelector('.cart-icon');
+                        badge = document.createElement('span');
+                        badge.className = 'cart-badge';
+                        cartLink.appendChild(badge);
+                    }
+                    badge.innerText = data.cart_count;
+
+                    // Show Toast
+                    showToast("Item added to cart!");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast("Error adding item.");
+            })
+            .finally(() => {
+                // Reset Button
+                btnElement.innerText = originalText;
+                btnElement.disabled = false;
+            });
+        }
+
+        function showToast(message) {
+            const x = document.getElementById("toast");
+            x.innerText = message;
+            x.style.visibility = "visible";
+            // Check if animation class is needed, or just simple visibility toggle
+            x.className = "show"; // Assuming simple CSS or none
+            
+            // Add fade in/out animation styles dynamically if not present
+            x.style.opacity = 1;
+            
+            setTimeout(function(){ 
+                x.style.visibility = "hidden"; 
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
