@@ -10,7 +10,7 @@ require_once '../../sidenav.php';
 
 // Authentication check - only allow admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: /index.php");
+    header("Location: /");
     exit();
 }
 

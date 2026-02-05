@@ -9,7 +9,7 @@ require_once '../../header.php';
 require_once '../../sidenav.php';
 
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'cashier'])) {
-    header("Location: /index.php");
+    header("Location: /");
     exit();
 }
 

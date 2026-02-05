@@ -10,7 +10,7 @@ $is_qr_flow = isset($_SESSION['qr_redirect']) ||
               (basename($_SERVER['SCRIPT_NAME']) === 'event_checkin.php' && isset($_GET['event_id']));
 
 if (!isset($_SESSION['user_id']) && !$is_qr_flow) {
-    header('Location: /index.php');
+    header('Location: /');
     exit;
 }
 
@@ -22,7 +22,7 @@ try {
 
     if (!$user) {
         session_destroy();
-        header('Location: /index.php');
+        header('Location: /');
         exit;
     }
 
@@ -43,7 +43,7 @@ try {
     $dashboard_url = match($user['role']) {
         'admin' => $base_url . 'pages/dashboard/admin_dashboard.php',
         'cashier' => $base_url . 'pages/dashboard/cashier_dashboard.php',
-        default => $base_url . 'index.php'
+        default => $base_url
     };
 
     // Store Name & Logo Logic

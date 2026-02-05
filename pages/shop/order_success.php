@@ -7,7 +7,7 @@
 require_once '../../config/db.php';
 
 if (!isset($_GET['id'])) {
-    header("Location: /index.php");
+    header("Location: /");
     exit();
 }
 
@@ -152,7 +152,7 @@ $settings = get_settings($pdo);
         </div>
         
         <button onclick="window.print()" class="btn-print">Print Receipt</button>
-        <a href="/index.php" class="btn-home">Back to Store</a>
+        <a href="/" class="btn-home">Back to Store</a>
     </div>
 
 </body>

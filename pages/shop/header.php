@@ -28,7 +28,7 @@ $store_name = $settings['store_name'] ?? 'My Digital Store';
 <header class="shop-header">
     <div class="shop-logo">
         <!-- Assuming logo exists, else text -->
-        <a href="/index.php">
+        <a href="/">
             <img src="<?= !empty($settings['store_logo']) ? '/images/settings/'.htmlspecialchars($settings['store_logo']) : '/images/Logo.png' ?>" alt="<?= htmlspecialchars($store_name) ?>" onerror="this.src='/images/icons/user.png'"> 
             <span><?= htmlspecialchars($store_name) ?></span>
         </a>

@@ -10,7 +10,7 @@ require_once '../../sidenav.php';
 
 // Authentication check
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /index.php");
+    header("Location: /");
     exit();
 }
 

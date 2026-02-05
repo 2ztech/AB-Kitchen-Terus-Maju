@@ -118,7 +118,7 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
         <aside class="shop-sidebar">
             <div class="filter-group">
                 <h3>Categories</h3>
-                <a href="index.php" class="<?= $category_filter == '' ? 'active' : '' ?>">All Categories</a>
+                <a href="/" class="<?= $category_filter == '' ? 'active' : '' ?>">All Categories</a>
                 <?php foreach ($categories as $cat): ?>
                     <a href="?category=<?= $cat['id'] ?>&max_price=<?= $max_price ?>" 
                        class="<?= $category_filter == $cat['id'] ? 'active' : '' ?>">
@@ -129,7 +129,7 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
 
             <div class="filter-group">
                 <h3>Price Filter</h3>
-                <form method="GET" action="index.php">
+                <form method="GET" action="/">
                     <?php if ($category_filter): ?>
                         <input type="hidden" name="category" value="<?= $category_filter ?>">
                     <?php endif; ?>
@@ -168,7 +168,7 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
                 <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #777;">
                     <i class='bx bx-search' style="font-size:3rem;margin-bottom:10px;"></i>
                     <p>No products found matching your filter.</p>
-                    <a href="index.php" style="color:var(--accent-color);text-decoration:none;">Clear Filters</a>
+                    <a href="/" style="color:var(--accent-color);text-decoration:none;">Clear Filters</a>
                 </div>
             <?php endif; ?>
         </div>

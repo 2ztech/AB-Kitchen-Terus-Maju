@@ -157,7 +157,7 @@ $settings = get_settings($pdo);
             <div style="text-align:center;padding:50px;color:#999;">
                 <i class='bx bx-basket' style="font-size:4rem;margin-bottom:20px;"></i>
                 <p>Your cart is empty.</p>
-                <a href="/index.php" style="color:var(--accent-color);text-decoration:none;font-weight:bold;">Continue Shopping</a>
+                <a href="/" style="color:var(--accent-color);text-decoration:none;font-weight:bold;">Continue Shopping</a>
             </div>
         <?php else: ?>
             <table class="cart-table">
