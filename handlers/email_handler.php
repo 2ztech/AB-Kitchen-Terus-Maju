@@ -70,32 +70,22 @@ class EmailHandler {
             $mail->setFrom($fromEmail, $fromName);
             $mail->addAddress($order['customer_email'], $order['customer_name']);
 
-            // Attachments (Receipt)
-            if (!empty($order['receipt_image'])) {
-                $receiptPath = __DIR__ . '/../images/receipts/' . $order['receipt_image'];
-                if (file_exists($receiptPath)) {
-                    $mail->addAttachment($receiptPath, 'PaymentReceipt.jpg');
-                }
-            }
+            // Prepare variables for template
+            $store_name = $settings['store_name'] ?? 'My Store';
+            $store_address = $settings['store_address'] ?? '';
 
             // Content
             $mail->isHTML(true);
-            $mail->Subject = "Order Receipt #" . $order['id'] . " - " . ($settings['store_name'] ?? 'My Store');
+            $mail->Subject = "Order Receipt #" . $order['id'] . " - " . $store_name;
             
-            // Build Body
-            $body = "<h2>Thank you for your order, {$order['customer_name']}!</h2>";
-            $body .= "<p>Your order <strong>#{$order['id']}</strong> has been placed successfully.</p>";
-            $body .= "<p><strong>Total Amount:</strong> RM " . number_format($order['total_amount'], 2) . "</p>";
-            $body .= "<h3>Order Summary:</h3><ul>";
-            
-            foreach ($items as $item) {
-                $body .= "<li>{$item['name']} (x{$item['quantity']}) - RM " . number_format($item['price_at_purchase'] * $item['quantity'], 2) . "</li>";
-            }
-            $body .= "</ul>";
-            $body .= "<p>We will process your order shortly.</p>";
+            // Build Body using Template
+            ob_start();
+            require __DIR__ . '/../templates/email_receipt.php';
+            $body = ob_get_clean();
+
             
             $mail->Body = $body;
-            $mail->AltBody = strip_tags(str_replace(['<br>', '</p>', '</li>'], ["\n", "\n\n", "\n"], $body));
+            $mail->AltBody = "Thank you for your order #{$order['id']}. Total: RM " . number_format($order['total_amount'], 2) . ". Please view this email in a client that supports HTML.";
 
             $mail->send();
             return true;

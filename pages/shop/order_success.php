@@ -78,10 +78,12 @@ $settings = get_settings($pdo);
         .btn-print {
             display: block; width: 100%; background: #333; color: white; border: none; padding: 12px;
             margin-top: 20px; cursor: pointer; border-radius: 5px; font-size: 1rem;
+            box-sizing: border-box;
         }
         .btn-home {
             display: block; width: 100%; background: none; border: 1px solid #ccc; color: #555; padding: 12px;
             margin-top: 10px; cursor: pointer; border-radius: 5px; font-size: 1rem; text-decoration: none; text-align: center;
+            box-sizing: border-box;
         }
         
         @media print {
