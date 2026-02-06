@@ -141,13 +141,14 @@ $settings = get_settings($pdo);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($settings['store_name'] ?? 'My Digital Store') ?></title>
     <?php if (!empty($settings['store_favicon'])): ?>
         <link rel="icon" href="/images/settings/<?= htmlspecialchars($settings['store_favicon']) ?>" type="image/x-icon">
     <?php endif; ?>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="../../styles/shop.css">
+    <link rel="stylesheet" href="../../styles/shop.css?v=<?= filemtime(__DIR__ . '/../../styles/shop.css') ?>">
     <style>
         .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
         .form-section { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
@@ -169,7 +170,12 @@ $settings = get_settings($pdo);
         
         .pickup-info { background: #e3f2fd; color: #0d47a1; padding: 15px; border-radius: 6px; font-size: 0.9rem; margin-top: 10px; display: none; }
         
-        @media(max-width: 768px) { .checkout-grid { grid-template-columns: 1fr; } }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        
+        @media(max-width: 768px) { 
+            .checkout-grid { grid-template-columns: 1fr; } 
+            .form-row { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -192,7 +198,7 @@ $settings = get_settings($pdo);
                     <input type="text" name="name" class="form-control" required placeholder="e.g. Ahmad Albab">
                 </div>
                 
-                <div class="form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div class="form-row">
                     <div>
                         <label>Email Address</label>
                         <input type="email" name="email" class="form-control" required placeholder="email@example.com">

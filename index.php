@@ -65,7 +65,7 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($settings['store_name'] ?? 'AcikBulat Digital Store') ?></title>
+    <title><?= htmlspecialchars($settings['store_name'] ?? 'My Digital Store') ?></title>
     <?php if (!empty($settings['store_favicon'])): ?>
         <link rel="icon" href="images/settings/<?= htmlspecialchars($settings['store_favicon']) ?>" type="image/x-icon">
     <?php endif; ?>
@@ -73,7 +73,7 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/shop.css">
+    <link rel="stylesheet" href="styles/shop.css?v=<?= filemtime(__DIR__ . '/styles/shop.css') ?>">
     <style>
         .announcement-banner {
             background: #ffeeba;

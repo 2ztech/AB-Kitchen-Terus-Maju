@@ -80,7 +80,7 @@ $settings = get_settings($pdo);
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../styles/shop.css">
+    <link rel="stylesheet" href="../../styles/shop.css?v=<?= filemtime(__DIR__ . '/../../styles/shop.css') ?>">
     <style>
         .cart-table {
             width: 100%;
@@ -138,11 +138,83 @@ $settings = get_settings($pdo);
         }
         .cart-summary {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
             text-align: right;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 1px solid #eee;
+        }
+        
+        /* Mobile Responsive Cart */
+        @media (max-width: 768px) {
+            .cart-table thead { display: none; }
+            .cart-table, .cart-table tbody {
+                display: block;
+                width: 100%;
+            }
+            .cart-table {
+                background: transparent;
+                box-shadow: none;
+            }
+            
+            .cart-table tr {
+                display: flex;
+                flex-wrap: wrap;
+                margin-bottom: 15px;
+                background: white;
+                border-radius: 8px;
+                padding: 15px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                align-items: center;
+                position: relative;
+            }
+            
+            /* Product Image & Name - Full Width-ish */
+            .cart-table td[data-label="Product"] {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+                padding: 0;
+                border: none;
+            }
+            
+            /* Price - Hidden label, just value */
+            .cart-table td[data-label="Price"] {
+                display: none; /* Hide individual unit price to save space, usually user cares about subtotal or total */
+            }
+
+            /* Quantity */
+            .cart-table td[data-label="Quantity"] {
+                width: auto;
+                padding: 0;
+                border: none;
+                margin-right: auto; /* Push others to right */
+            }
+            .cart-table td[data-label="Quantity"] form {
+                justify-content: flex-start !important;
+            }
+
+            /* Subtotal */
+            .cart-table td[data-label="Subtotal"] {
+                width: auto;
+                padding: 0;
+                border: none;
+                font-weight: bold;
+                color: var(--accent-color);
+                margin-right: 15px;
+            }
+            .cart-table td[data-label="Subtotal"]::before { content: ''; display: none; }
+
+            /* Remove Button */
+            .cart-table td[data-label="Action"] {
+                width: auto;
+                padding: 0;
+                border: none;
+            }
+            
+            /* Cleanup */
+            .cart-table td::before { display: none; }
         }
     </style>
 </head>
@@ -173,14 +245,14 @@ $settings = get_settings($pdo);
                 <tbody>
                     <?php foreach ($cartItems as $item): ?>
                     <tr>
-                        <td style="display:flex;align-items:center;gap:15px;">
+                        <td data-label="Product" style="display:flex;align-items:center;gap:15px;">
                             <img src="<?= $item['image_url'] ? '../../images/product/'.$item['image_url'] : '../../images/icons/no-image.png' ?>" 
                                  style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
                             <strong><?= htmlspecialchars($item['name']) ?></strong>
                         </td>
-                        <td>RM <?= number_format($item['price'], 2) ?></td>
-                        <td>
-                            <form method="POST" style="display:flex;align-items:center;">
+                        <td data-label="Price">RM <?= number_format($item['price'], 2) ?></td>
+                        <td data-label="Quantity">
+                            <form method="POST" style="display:flex;align-items:center; justify-content: flex-end;">
                                 <input type="hidden" name="product_id" value="<?= $item['id'] ?>">
                                 <input type="number" name="qty" value="<?= $item['qty'] ?>" min="1" class="qty-input">
                                 <button type="submit" name="update_qty" class="btn-update" title="Update Quantity">
@@ -188,8 +260,8 @@ $settings = get_settings($pdo);
                                 </button>
                             </form>
                         </td>
-                        <td>RM <?= number_format($item['subtotal'], 2) ?></td>
-                        <td>
+                        <td data-label="Subtotal">RM <?= number_format($item['subtotal'], 2) ?></td>
+                        <td data-label="Action" style="text-align: right;">
                             <form method="POST">
                                 <input type="hidden" name="product_id" value="<?= $item['id'] ?>">
                                 <button type="submit" name="remove_item" class="btn-remove" title="Remove Item">

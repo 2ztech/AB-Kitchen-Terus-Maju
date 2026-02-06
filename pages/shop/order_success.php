@@ -42,11 +42,13 @@ $settings = get_settings($pdo);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receipt #<?= $order_id ?></title>
     <?php if (!empty($settings['store_favicon'])): ?>
         <link rel="icon" href="/images/settings/<?= htmlspecialchars($settings['store_favicon']) ?>" type="image/x-icon">
     <?php endif; ?>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shop.css?v=<?= filemtime(__DIR__ . '/../../styles/shop.css') ?>">
     <style>
         body { font-family: 'Outfit', sans-serif; background: #f0f0f0; margin: 0; padding: 20px; }
         .receipt-container {

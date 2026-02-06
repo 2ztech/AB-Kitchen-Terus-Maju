@@ -17,6 +17,13 @@ body {
     color: var(--text-color);
 }
 
+/* Global Reset for better layout control */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 /* Header */
 .shop-header {
     background: white;
@@ -235,6 +242,56 @@ body {
         width: 100%;
         position: static;
         margin-bottom: 20px;
+    }
+
+    /* Header Responsive */
+    .shop-header {
+        flex-direction: column;
+        padding: 15px 20px;
+        gap: 15px;
+    }
+
+    .shop-logo a {
+        justify-content: center;
+    }
+
+    .shop-nav {
+        width: 100%;
+        justify-content: space-around;
+        /* Better spacing for nav items */
+        gap: 10px;
+    }
+
+    /* Adjust Grid for Mobile (2 columns preferred) */
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 15px;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .container {
+        padding: 0 15px 40px;
+    }
+
+    /* Track Order Mobile */
+    .search-input {
+        width: 100% !important;
+        /* Stack full width */
+        margin-right: 0 !important;
+        margin-bottom: 15px;
+        /* Add gap between input and button */
+    }
+
+    .btn-track {
+        width: 100%;
+        display: block;
+    }
+
+    .search-box {
+        padding: 30px 20px !important;
     }
 }
 
