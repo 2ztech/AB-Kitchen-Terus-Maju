@@ -5,6 +5,7 @@
  */
 
 require_once '../../config/db.php';
+require_once '../../handlers/email_handler.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -104,6 +105,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $pdo->commit();
+
+                // Send Email Receipt
+                try {
+                    $emailer = new EmailHandler($pdo);
+                    $emailer->sendOrderReceipt($order_id);
+                } catch (Exception $e) {
+                    error_log("Failed to trigger email: " . $e->getMessage());
+                    // Continue flow even if email fails
+                }
                 
                 // Clear Cart
                 unset($_SESSION['cart']);

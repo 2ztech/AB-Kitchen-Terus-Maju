@@ -48,7 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'whatsapp_number' => trim($_POST['whatsapp_number']),
         
         // Promotion
-        'announcement_text' => trim($_POST['announcement_text'])
+        'announcement_text' => trim($_POST['announcement_text']),
+
+        // SMTP
+        'smtp_host' => trim($_POST['smtp_host'] ?? ''),
+        'smtp_port' => trim($_POST['smtp_port'] ?? ''),
+        'smtp_user' => trim($_POST['smtp_user'] ?? ''),
+        'smtp_pass' => trim($_POST['smtp_pass'] ?? ''),
+        'smtp_enc'  => trim($_POST['smtp_enc'] ?? ''),
+        'smtp_from_email' => trim($_POST['smtp_from_email'] ?? ''),
+        'smtp_from_name'  => trim($_POST['smtp_from_name'] ?? '')
     ];
     
     try {
@@ -160,6 +169,7 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
                 <button type="button" class="tab-btn" onclick="openTab('payment')"><i class='bx bxs-bank'></i> Payment</button>
                 <button type="button" class="tab-btn" onclick="openTab('whatsapp')"><i class='bx bxl-whatsapp'></i> WhatsApp</button>
                 <button type="button" class="tab-btn" onclick="openTab('promo')"><i class='bx bxs-megaphone'></i> Promotion</button>
+                <button type="button" class="tab-btn" onclick="openTab('smtp')"><i class='bx bxs-envelope'></i> SMTP</button>
                 <button type="button" class="tab-btn" onclick="openTab('categories')"><i class='bx bxs-category'></i> Categories</button>
                 <button type="button" class="tab-btn" onclick="openTab('customization')"><i class='bx bxs-palette'></i> Customization</button>
             </div>
@@ -250,6 +260,63 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
                     </div>
                 </div>
 
+                <!-- SMTP Tab -->
+                <div id="smtp" class="tab-pane">
+                    <h2 class="section-header">SMTP Email Settings</h2>
+                    <div class="form-group">
+                        <label>SMTP Host</label>
+                        <input type="text" name="smtp_host" class="form-control" placeholder="smtp.gmail.com" value="<?= htmlspecialchars($current_settings['smtp_host'] ?? '') ?>">
+                    </div>
+                    
+                    <div class="form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                        <div>
+                            <label>SMTP Port</label>
+                            <input type="number" name="smtp_port" class="form-control" placeholder="587" value="<?= htmlspecialchars($current_settings['smtp_port'] ?? '') ?>">
+                        </div>
+                        <div>
+                            <label>Encryption</label>
+                            <select name="smtp_enc" class="form-control">
+                                <option value="tls" <?= ($current_settings['smtp_enc'] ?? '') === 'tls' ? 'selected' : '' ?>>TLS (Recommended)</option>
+                                <option value="ssl" <?= ($current_settings['smtp_enc'] ?? '') === 'ssl' ? 'selected' : '' ?>>SSL</option>
+                                <option value="none" <?= ($current_settings['smtp_enc'] ?? '') === 'none' ? 'selected' : '' ?>>None</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>SMTP Username</label>
+                        <input type="text" name="smtp_user" class="form-control" placeholder="you@example.com" value="<?= htmlspecialchars($current_settings['smtp_user'] ?? '') ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>SMTP Password</label>
+                        <div style="position:relative;">
+                            <input type="password" id="smtp_pass" name="smtp_pass" class="form-control" placeholder="App Password / Your Password" value="<?= htmlspecialchars($current_settings['smtp_pass'] ?? '') ?>" style="padding-right:40px;">
+                            <i class='bx bx-show' id="togglePassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1.2rem;color:#666;" onclick="toggleSmtpPass()"></i>
+                        </div>
+                    </div>
+
+                    <hr style="margin:20px 0;border:none;border-top:1px dashed #ccc;">
+                    
+                    <div class="form-group">
+                        <label>From Email</label>
+                        <input type="email" name="smtp_from_email" class="form-control" placeholder="noreply@mystore.com" value="<?= htmlspecialchars($current_settings['smtp_from_email'] ?? '') ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>From Name</label>
+                        <input type="text" name="smtp_from_name" class="form-control" placeholder="Store Admin" value="<?= htmlspecialchars($current_settings['smtp_from_name'] ?? '') ?>">
+                    </div>
+
+                    <hr style="margin:20px 0;border:none;border-top:1px dashed #ccc;">
+                    
+                    <h3 style="margin-bottom:15px;">Test Configuration</h3>
+                    <div style="display:flex;gap:10px;">
+                        <input type="email" id="testEmailInput" class="form-control" placeholder="Enter email to test..." style="flex:1;">
+                        <button type="button" class="btn-save" onclick="sendTestEmail()" id="btnTest" style="width:auto;background:#17a2b8;">Send Test Email</button>
+                    </div>
+                </div>
+
                 <!-- Categories Tab -->
                 <div id="categories" class="tab-pane">
                     <h2 class="section-header">Product Categories</h2>
@@ -321,7 +388,7 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
 
         // Category Manager
         function loadCategories() {
-            fetch('ajax_categories.php', { method: 'POST', body: new URLSearchParams({action: 'list'}) })
+            fetch('/pages/settings/ajax_categories.php', { method: 'POST', body: new URLSearchParams({action: 'list'}) })
             .then(res => res.json())
             .then(res => {
                 if (res.success) {
@@ -344,7 +411,7 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
             const name = input.value.trim();
             if (!name) return;
 
-            fetch('ajax_categories.php', { 
+            fetch('/pages/settings/ajax_categories.php', { 
                 method: 'POST', 
                 body: new URLSearchParams({action: 'add', name: name}) 
             })
@@ -361,7 +428,7 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
 
         function deleteCategory(id) {
             if(!confirm('Delete this category?')) return;
-            fetch('ajax_categories.php', { 
+            fetch('/pages/settings/ajax_categories.php', { 
                 method: 'POST', 
                 body: new URLSearchParams({action: 'delete', id: id}) 
             })
@@ -400,6 +467,53 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
             document.getElementById('previewArea').innerHTML = '<p style="color:green">Ready to save!</p><img src="'+canvas.toDataURL()+'" class="qr-preview">';
             closeModal();
         };
+
+        function sendTestEmail() {
+            const email = document.getElementById('testEmailInput').value.trim();
+            const btn = document.getElementById('btnTest');
+            
+            if (!email) {
+                alert('Please enter an email address first.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = 'Sending...';
+
+            fetch('/pages/settings/ajax_test_smtp.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ email: email })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    alert('Test email sent successfully! Please check your inbox.');
+                } else {
+                    alert('Failed to send email: ' + res.message);
+                }
+            })
+            .catch(err => {
+                alert('An error occurred. Please check console.');
+                console.error(err);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerText = 'Send Test Email';
+            });
+        }
+
+        function toggleSmtpPass() {
+            const input = document.getElementById('smtp_pass');
+            const icon = document.getElementById('togglePassword');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('bx-show', 'bx-hide');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('bx-hide', 'bx-show');
+            }
+        }
 
         function closeModal() {
             modal.style.display = 'none';
