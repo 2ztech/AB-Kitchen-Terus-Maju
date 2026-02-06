@@ -1,3 +1,23 @@
 xampp/
 webalizer/
 favicon.ico
+# 1. Database (CRITICAL - Prevents overwriting live data)
+db/*.db
+*.db
+
+# 2. User Generated Content (Prevents deleting customer images)
+images/receipts/*
+images/product/*
+images/settings/*
+
+# 3. Keep the empty folders, just ignore files inside
+!images/receipts/.gitkeep
+!images/product/.gitkeep
+!images/settings/.gitkeep
+
+# 4. Dependencies (Optional: If you run 'composer install' on server)
+vendor/
+
+# 5. System Files
+.DS_Store
+Thumbs.db
