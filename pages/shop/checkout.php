@@ -48,6 +48,13 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $phone = trim($_POST['phone']);
+    // Normalize phone number: Remove +60 or 60 prefix, replace with 0
+    // First remove all non-numeric characters except +
+    $phone = preg_replace('/[^0-9+]/', '', $phone);
+    // Replace +60 or 60 at the start with 0
+    if (preg_match('/^(\+?60)/', $phone)) {
+        $phone = preg_replace('/^(\+?60)/', '0', $phone);
+    }
     $email = trim($_POST['email']);
     $delivery_method = $_POST['delivery_method']; // 'pickup' or 'delivery'
     $address = trim($_POST['address']);
@@ -205,8 +212,25 @@ $settings = get_settings($pdo);
                     </div>
                     <div>
                         <label>Phone Number</label>
-                        <input type="tel" name="phone" class="form-control" required placeholder="+6012-3456789">
+                        <input type="tel" name="phone" id="phone_input" class="form-control" required placeholder="012-3456789">
                     </div>
+                
+                <script>
+                document.getElementById('phone_input').addEventListener('blur', function() {
+                    let val = this.value.trim();
+                    // Remove all non-numeric chars except +
+                    val = val.replace(/[^0-9+]/g, '');
+                    
+                    // Replace +60 or 60 at start with 0
+                    if (val.startsWith('+60')) {
+                        val = '0' + val.substring(3);
+                    } else if (val.startsWith('60')) {
+                        val = '0' + val.substring(2);
+                    }
+                    
+                    this.value = val;
+                });
+                </script>
                 </div>
 
                 <h2 style="margin-top:30px;">Delivery Method</h2>
