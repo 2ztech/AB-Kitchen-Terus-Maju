@@ -41,8 +41,8 @@ try {
 
     // Dashboard Links
     $dashboard_url = match($user['role']) {
-        'admin' => $base_url . 'pages/dashboard/admin_dashboard.php',
-        'cashier' => $base_url . 'pages/dashboard/cashier_dashboard.php',
+        'admin' => $base_url . 'admin',
+        'cashier' => $base_url . 'admin',
         default => $base_url
     };
 
@@ -90,7 +90,7 @@ try {
           <ul>
             <li>
               <img src="<?= $base_url ?>images/icons/user.png">
-              <a href="<?= $base_url ?>/users/profile">My Profile</a>
+              <a href="<?= $base_url ?>users/profile">My Profile</a>
             </li>
             <li>
               <img src="<?= $base_url ?>images/icons/log-out.png">

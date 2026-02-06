@@ -87,6 +87,32 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
             border-left: 5px solid #ffc107;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
+
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 35px;
+            box-shadow: 2px 2px 5px #999;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-float:hover {
+            background-color: #128c7e;
+            transform: scale(1.1);
+            color: #FFF;
+        }
     </style>
 </head>
 <body>
@@ -173,6 +199,13 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
             <?php endif; ?>
         </div>
     </div>
+
+    <!-- WhatsApp Floating Button -->
+    <?php if (!empty($settings['whatsapp_number'])): ?>
+        <a href="https://wa.me/<?= htmlspecialchars($settings['whatsapp_number']) ?>" target="_blank" class="whatsapp-float">
+            <i class='bx bxl-whatsapp'></i>
+        </a>
+    <?php endif; ?>
 
     <!-- Toast Notification -->
     <div id="toast" style="visibility:hidden;min-width:250px;margin-left:-125px;background-color:#333;color:#fff;text-align:center;border-radius:2px;padding:16px;position:fixed;z-index:1;left:50%;bottom:30px;font-size:17px;">
