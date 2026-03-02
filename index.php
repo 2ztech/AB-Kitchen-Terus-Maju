@@ -171,7 +171,18 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
         <div class="product-grid">
             <?php if (count($products) > 0): ?>
                 <?php foreach ($products as $p): ?>
-                    <div class="product-card">
+                    <?php 
+                        // Prepare data for the modal to avoid escaping issues in JS
+                        $modalData = htmlspecialchars(json_encode([
+                            'id' => $p['id'],
+                            'name' => $p['name'],
+                            'description' => $p['description'],
+                            'price' => number_format($p['price'], 2),
+                            'stock' => $p['stock'],
+                            'image' => $p['image_url'] ? 'images/product/' . $p['image_url'] : 'images/icons/no-image.png'
+                        ]), ENT_QUOTES, 'UTF-8');
+                    ?>
+                    <div class="product-card" onclick="openProductModal(<?= $modalData ?>)">
                         <div class="product-image">
                             <img src="<?= $p['image_url'] ? 'images/product/' . htmlspecialchars($p['image_url']) : 'images/icons/no-image.png' ?>" 
                                  alt="<?= htmlspecialchars($p['name']) ?>"
@@ -183,9 +194,9 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
                             <span class="product-price">RM <?= number_format($p['price'], 2) ?></span>
                             
                             <?php if ($p['stock'] > 0): ?>
-                                <button onclick="addToCart(<?= $p['id'] ?>, this)" class="btn-add-cart">Add to Cart</button>
+                                <button onclick="event.stopPropagation(); addToCart(<?= $p['id'] ?>, this)" class="btn-add-cart">Add to Cart</button>
                             <?php else: ?>
-                                <button class="btn-add-cart" style="background:#ccc;cursor:not-allowed;" disabled>Out of Stock</button>
+                                <button onclick="event.stopPropagation();" class="btn-add-cart" style="background:#ccc;cursor:not-allowed;" disabled>Out of Stock</button>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -210,6 +221,24 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
     <!-- Toast Notification -->
     <div id="toast" style="visibility:hidden;min-width:250px;margin-left:-125px;background-color:#333;color:#fff;text-align:center;border-radius:2px;padding:16px;position:fixed;z-index:1;left:50%;bottom:30px;font-size:17px;">
         Item added to cart
+    </div>
+
+    <!-- Product Modal Overlay -->
+    <div id="productModal" class="modal-overlay" onclick="closeProductModal()">
+        <div class="modal-content" onclick="event.stopPropagation();">
+            <span class="modal-close" onclick="closeProductModal()">&times;</span>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="Product Image" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+                <div class="modal-details">
+                    <h2 id="modalTitle"></h2>
+                    <span class="modal-price" id="modalPrice"></span>
+                    <p class="modal-description" id="modalDescription"></p>
+                    <div id="modalActionArea">
+                        <!-- Action button injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Simple Footer -->
@@ -272,6 +301,37 @@ if (($settings['store_status'] ?? 'open') === 'closed' && !$is_staff) {
             setTimeout(function(){ 
                 x.style.visibility = "hidden"; 
             }, 3000);
+        }
+
+        // Modal Functions
+        function openProductModal(product) {
+            document.getElementById('modalImage').src = product.image;
+            document.getElementById('modalTitle').innerText = product.name;
+            document.getElementById('modalPrice').innerText = 'RM ' + product.price;
+            document.getElementById('modalDescription').innerText = product.description;
+            
+            const actionArea = document.getElementById('modalActionArea');
+            if (product.stock > 0) {
+                actionArea.innerHTML = `<button onclick="addToCart(${product.id}, this); closeProductModal();" class="btn-add-cart modal-btn">Add to Cart</button>`;
+            } else {
+                actionArea.innerHTML = `<button class="btn-add-cart modal-btn" style="background:#ccc;cursor:not-allowed;" disabled>Out of Stock</button>`;
+            }
+            
+            const modal = document.getElementById('productModal');
+            modal.style.display = 'flex';
+            // Trigger reflow for transition
+            void modal.offsetWidth;
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling under modal
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('productModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling
+            }, 300); // Wait for transition out
         }
     </script>
 </body>

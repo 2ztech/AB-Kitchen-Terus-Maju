@@ -137,6 +137,7 @@ body {
     box-shadow: var(--card-shadow);
     transition: transform 0.3s, box-shadow 0.3s;
     border: 1px solid #f0f0f0;
+    cursor: pointer;
 }
 
 .product-card:hover {
@@ -205,6 +206,110 @@ body {
 
 .btn-add-cart:hover {
     background: var(--accent-color);
+}
+
+/* Product Modal Styles */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.modal-overlay.show {
+    opacity: 1;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.show .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.3s;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: var(--accent-color);
+}
+
+.modal-body {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.modal-body img {
+    width: 50%;
+    max-width: 350px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.modal-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-details h2 {
+    margin: 0 0 15px 0;
+    font-size: 1.8rem;
+    color: #2c3e50;
+    line-height: 1.2;
+}
+
+.modal-price {
+    font-size: 1.6rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.modal-description {
+    font-size: 1.05rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.modal-btn {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    width: auto;
+    min-width: 200px;
 }
 
 /* Shop Layout with Sidebar */
@@ -292,6 +397,26 @@ body {
 
     .search-box {
         padding: 30px 20px !important;
+    }
+
+    /* Modal Responsive */
+    .modal-body {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .modal-body img {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .modal-details h2 {
+        font-size: 1.5rem;
+    }
+
+    .modal-btn {
+        width: 100%;
     }
 }
 
