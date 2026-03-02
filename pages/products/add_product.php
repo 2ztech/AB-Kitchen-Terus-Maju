@@ -25,8 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $desc = trim($_POST['description']);
     $price = $_POST['price']; // Sell Price
-    $stock_price = $_POST['stock_price'] ?? 0.00; // Cost Price
-    $stock = $_POST['stock'];
+$stock_price = !empty($_POST['stock_price']) ? (float)$_POST['stock_price'] : 0.00;    $stock = $_POST['stock'];
     $category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
     
     // Image Upload

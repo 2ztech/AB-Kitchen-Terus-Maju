@@ -118,6 +118,12 @@ try {
                     <td><?= number_format($p['price'], 2) ?></td>
                     <?php if ($isAdmin): ?>
                     <td>
+                        <?php 
+                            // Force empty strings to be parsed as 0.00 to prevent math crashes
+                            $cost = is_numeric($p['stock_price']) ? (float)$p['stock_price'] : 0.00;
+                            $sell = is_numeric($p['price']) ? (float)$p['price'] : 0.00;
+                            $profit = $sell - $cost; 
+                        ?>
                         <small style="color:#666;">Cost: <?= number_format($p['stock_price'], 2) ?></small><br>
                         <?php $profit = $p['price'] - $p['stock_price']; ?>
                         <strong style="color:<?= $profit >= 0 ? 'green' : 'red' ?>;">
