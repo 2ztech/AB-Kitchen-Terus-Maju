@@ -13,18 +13,33 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'cash
     exit();
 }
 
+require_once '../../handlers/email_handler.php';
+$emailer = new EmailHandler($pdo);
+
 // Handle Status Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'], $_POST['order_id'], $_POST['status'])) {
     $new_status = $_POST['status'];
     $order_id = $_POST['order_id'];
     
     // Validate status
-    $allowed_statuses = ['pending', 'processing', 'completed', 'cancelled'];
+    $allowed_statuses = ['pending', 'processing', 'completed', 'cancelled', 'ready_for_pickup', 'ready_for_delivery'];
     if (in_array($new_status, $allowed_statuses)) {
         try {
-            $stmtUpdate = $pdo->prepare("UPDATE orders SET status = ? WHERE id = ?");
-            $stmtUpdate->execute([$new_status, $order_id]);
-            $success_msg = "Order #$order_id status updated to " . ucfirst($new_status);
+            // Check if status actually changed
+            $stmtCheck = $pdo->prepare("SELECT status FROM orders WHERE id = ?");
+            $stmtCheck->execute([$order_id]);
+            $old_status = $stmtCheck->fetchColumn();
+
+            if ($old_status !== $new_status) {
+                $stmtUpdate = $pdo->prepare("UPDATE orders SET status = ? WHERE id = ?");
+                $stmtUpdate->execute([$new_status, $order_id]);
+                $success_msg = "Order #$order_id status updated to " . ucwords(str_replace('_', ' ', $new_status));
+                
+                // Trigger email if required
+                if (in_array($new_status, ['ready_for_pickup', 'ready_for_delivery'])) {
+                    $emailer->sendOrderStatusUpdate($order_id, $new_status);
+                }
+            }
         } catch (PDOException $e) {
             $error_msg = "Failed to update status.";
         }
@@ -36,7 +51,8 @@ $filter_status = isset($_GET['status']) ? $_GET['status'] : '';
 $sql = "SELECT * FROM orders";
 $params = [];
 
-if ($filter_status && in_array($filter_status, ['pending', 'processing', 'completed', 'cancelled'])) {
+$allowed_filter_statuses = ['pending', 'processing', 'completed', 'cancelled', 'ready_for_pickup', 'ready_for_delivery'];
+if ($filter_status && in_array($filter_status, $allowed_filter_statuses)) {
     $sql .= " WHERE status = ?";
     $params[] = $filter_status;
 }
@@ -48,7 +64,7 @@ $stmt->execute($params);
 $orders = $stmt->fetchAll();
 
 // Helper for UI
-$page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders";
+$page_title = $filter_status ? ucwords(str_replace('_', ' ', $filter_status)) . " Orders" : "All Orders";
 ?>
 
 <!DOCTYPE html>
@@ -67,6 +83,8 @@ $page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders
         .status-processing { background: #cce5ff; color: #004085; }
         .status-completed { background: #d4edda; color: #155724; }
         .status-cancelled { background: #f8d7da; color: #721c24; }
+        .status-ready_for_pickup { background: #17a2b8; color: white; }
+        .status-ready_for_delivery { background: #6f42c1; color: white; }
         
         .btn-link { color: #007bff; text-decoration: none; font-size: 0.9em; }
         .btn-link:hover { text-decoration: underline; }
@@ -122,7 +140,7 @@ $page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders
                         </td>
                         <td>RM <?= number_format($o['total_amount'], 2) ?></td>
                         <td>
-                            <span class="badge status-<?= $o['status'] ?>"><?= $o['status'] ?></span>
+                            <span class="badge status-<?= $o['status'] ?>"><?= ucwords(str_replace('_', ' ', $o['status'])) ?></span>
                         </td>
                         <td>
                             <?php if (!empty($o['receipt_image'])): ?>
@@ -145,6 +163,8 @@ $page_title = $filter_status ? ucfirst($filter_status) . " Orders" : "All Orders
                                     <option value="processing" <?= $o['status']=='processing'?'selected':'' ?>>Processing</option>
                                     <option value="completed" <?= $o['status']=='completed'?'selected':'' ?>>Completed</option>
                                     <option value="cancelled" <?= $o['status']=='cancelled'?'selected':'' ?>>Cancelled</option>
+                                    <option value="ready_for_pickup" <?= $o['status']=='ready_for_pickup'?'selected':'' ?>>Ready for Pickup</option>
+                                    <option value="ready_for_delivery" <?= $o['status']=='ready_for_delivery'?'selected':'' ?>>Ready for Delivery</option>
                                 </select>
                                 <button type="submit" class="btn-update">Update</button>
                             </form>

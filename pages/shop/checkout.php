@@ -239,9 +239,11 @@ $settings = get_settings($pdo);
                         <label class="radio-option">
                             <input type="radio" name="delivery_method" value="pickup" checked onchange="toggleAddress(false)"> Self-Pickup
                         </label>
+                        <?php if (($settings['enable_delivery'] ?? '1') == '1'): ?>
                         <label class="radio-option">
                             <input type="radio" name="delivery_method" value="delivery" onchange="toggleAddress(true)"> Delivery
                         </label>
+                        <?php endif; ?>
                     </div>
                     
                     <div id="pickup-info" class="pickup-info" style="display:block;">

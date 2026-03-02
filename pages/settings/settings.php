@@ -102,6 +102,19 @@ if (preg_match('/(\d{1,2}:\d{2}\s?[AP]M)\s*-\s*(\d{1,2}:\d{2}\s?[AP]M)/i', $raw_
                         <label>Store Address</label>
                         <textarea name="store_address" class="form-control" rows="4"><?= htmlspecialchars($current_settings['store_address'] ?? '') ?></textarea>
                     </div>
+
+                    <div class="form-group">
+                        <label>Delivery Option</label>
+                        <div style="display:flex;align-items:center;gap:15px;">
+                            <label style="font-weight:normal; display:flex; align-items:center; gap:5px;">
+                                <input type="radio" name="enable_delivery" value="1" <?= ($current_settings['enable_delivery'] ?? '1') == '1' ? 'checked' : '' ?>> Enable
+                            </label>
+                            <label style="font-weight:normal; display:flex; align-items:center; gap:5px;">
+                                <input type="radio" name="enable_delivery" value="0" <?= ($current_settings['enable_delivery'] ?? '1') == '0' ? 'checked' : '' ?>> Disable
+                            </label>
+                            <span style="font-size:0.9rem;color:#666;margin-left:10px;">Enable or disable delivery option. If disabled, customers can only choose Self-Pickup.</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Payment Tab -->

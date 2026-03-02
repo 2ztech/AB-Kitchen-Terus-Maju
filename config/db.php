@@ -104,7 +104,7 @@ class Database {
                 payment_method TEXT DEFAULT 'manual',
                 receipt_image TEXT,
                 total_amount REAL NOT NULL DEFAULT 0.00,
-                status TEXT DEFAULT 'pending', -- 'pending', 'completed', 'cancelled'
+                status TEXT DEFAULT 'pending', -- 'pending', 'processing', 'completed', 'cancelled', 'ready_for_pickup', 'ready_for_delivery'
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
             )",

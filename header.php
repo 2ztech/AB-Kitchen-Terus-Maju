@@ -37,8 +37,7 @@ try {
     // Calculate the project root based on where this file (header.php) is located
     // If header.php is in C:/xampp/htdocs/my-project/, this gets "/my-project/"
     $project_dir = str_replace($_SERVER['DOCUMENT_ROOT'], '', str_replace('\\', '/', __DIR__));
-    $base_url = $protocol . "://" . $host . $project_dir . "/";
-
+$base_url = $protocol . "://" . $host . "/";
     // Dashboard Links
     $dashboard_url = match($user['role']) {
         'admin' => $base_url . 'admin',

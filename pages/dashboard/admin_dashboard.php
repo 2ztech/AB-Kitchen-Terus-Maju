@@ -230,6 +230,8 @@ new Chart(ctx, {
 .status-processing { background: #17a2b8; } /* Added Processing (Teal/Blue) */
 .status-completed { background: #28a745; }
 .status-cancelled { background: #dc3545; }
+.status-ready_for_pickup { background: #17a2b8; }
+.status-ready_for_delivery { background: #6f42c1; }
 </style>
 
 <?php include("../../footer.php"); ?>

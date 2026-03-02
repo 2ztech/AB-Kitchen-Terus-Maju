@@ -21,3 +21,7 @@ vendor/
 # 5. System Files
 .DS_Store
 Thumbs.db
+cookies.txt
+.gitignore
+dev-setup.sh
+db/store.sqlite

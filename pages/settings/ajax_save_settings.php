@@ -33,6 +33,7 @@ try {
         'store_address' => trim($_POST['store_address']),
         'operation_hours' => $operation_hours,
         'store_status' => isset($_POST['store_status']) ? 'open' : 'closed',
+        'enable_delivery' => isset($_POST['enable_delivery']) ? $_POST['enable_delivery'] : '1',
         
         // Payment
         'bank_name' => trim($_POST['bank_name']),

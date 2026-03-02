@@ -96,6 +96,85 @@ class EmailHandler {
         }
     }
 
+    public function sendOrderStatusUpdate($orderId, $newStatus) {
+        $settings = $this->getSettings();
+        
+        // Check if SMTP is configured
+        if (empty($settings['smtp_host']) || empty($settings['smtp_user'])) {
+            error_log("SMTP not configured. Skipping email for Order #$orderId");
+            return false;
+        }
+
+        // Fetch Order Details
+        $stmtOrder = $this->pdo->prepare("SELECT * FROM orders WHERE id = ?");
+        $stmtOrder->execute([$orderId]);
+        $order = $stmtOrder->fetch();
+
+        if (!$order) {
+            error_log("Order #$orderId not found.");
+            return false;
+        }
+
+        // Only send for specific statuses
+        if (!in_array($newStatus, ['ready_for_pickup', 'ready_for_delivery'])) {
+            return false;
+        }
+
+        // Fetch Items
+        $stmtItems = $this->pdo->prepare("
+            SELECT oi.*, p.name 
+            FROM order_items oi 
+            JOIN products p ON oi.product_id = p.id 
+            WHERE oi.order_id = ?
+        ");
+        $stmtItems->execute([$orderId]);
+        $items = $stmtItems->fetchAll();
+
+        $mail = new PHPMailer(true);
+
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host       = $settings['smtp_host'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $settings['smtp_user'];
+            $mail->Password   = $settings['smtp_pass'] ?? '';
+            $mail->SMTPSecure = $settings['smtp_enc'] === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = $settings['smtp_port'] ?? 587;
+
+            // Recipients
+            $fromName = $settings['smtp_from_name'] ?? ($settings['store_name'] ?? 'Store Admin');
+            $fromEmail = $settings['smtp_from_email'] ?? $settings['smtp_user'];
+            
+            $mail->setFrom($fromEmail, $fromName);
+            $mail->addAddress($order['customer_email'], $order['customer_name']);
+
+            // Prepare variables for template
+            $store_name = $settings['store_name'] ?? 'My Store';
+            $store_address = $settings['store_address'] ?? '';
+
+            // Content
+            $mail->isHTML(true);
+            $subjectStatus = str_replace('_', ' ', $newStatus);
+            $mail->Subject = "Order Status Update: " . ucwords($subjectStatus) . " - " . $store_name;
+            
+            // Build Body using Template
+            ob_start();
+            require __DIR__ . '/../templates/email_status_update.php';
+            $body = ob_get_clean();
+
+            $mail->Body = $body;
+            $mail->AltBody = "Your order #{$order['id']} is now " . ucwords($subjectStatus) . ". Please view this email in a client that supports HTML.";
+
+            $mail->send();
+            return true;
+
+        } catch (Exception $e) {
+            error_log("Status update email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            return false;
+        }
+    }
+
     public function sendTestEmail($toEmail) {
         $settings = $this->getSettings();
         

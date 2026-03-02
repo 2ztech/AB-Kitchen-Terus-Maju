@@ -109,6 +109,8 @@ $settings = get_settings($pdo);
         .status-processing { background: #cce5ff; color: #004085; }
         .status-completed { background: #d4edda; color: #155724; }
         .status-cancelled { background: #f8d7da; color: #721c24; }
+        .status-ready_for_pickup { background: #17a2b8; color: white; }
+        .status-ready_for_delivery { background: #6f42c1; color: white; }
         
         .order-details {
             max-height: 0;
@@ -164,7 +166,7 @@ $settings = get_settings($pdo);
                         <div class="order-meta">
                             <?= date('d M Y, h:i A', strtotime($o['created_at'])) ?> &bull; 
                             RM <?= number_format($o['total_amount'], 2) ?> &bull; 
-                            <span class="badge status-<?= $o['status'] ?>"><?= $o['status'] ?></span>
+                            <span class="badge status-<?= $o['status'] ?>"><?= ucwords(str_replace('_', ' ', $o['status'])) ?></span>
                         </div>
                     </div>
                     <div>
