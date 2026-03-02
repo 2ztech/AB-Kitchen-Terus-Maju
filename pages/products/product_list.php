@@ -124,8 +124,7 @@ try {
                             $sell = is_numeric($p['price']) ? (float)$p['price'] : 0.00;
                             $profit = $sell - $cost; 
                         ?>
-                        <small style="color:#666;">Cost: <?= number_format($p['stock_price'], 2) ?></small><br>
-                        <?php $profit = $p['price'] - $p['stock_price']; ?>
+                        <small style="color:#666;">Cost: <?= number_format($cost, 2) ?></small><br>
                         <strong style="color:<?= $profit >= 0 ? 'green' : 'red' ?>;">
                             Profit: <?= number_format($profit, 2) ?>
                         </strong>
